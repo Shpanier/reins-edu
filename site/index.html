@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>REINS Edu: an AI tutor for programming labs that the lecturer controls</title>
+  <meta name="description" content="Students work through a programming lab with an AI tutor that guides instead of handing out answers. The lecturer sees every chat, approves answers and paces the class. Open source, runs on your own computer.">
+  <link rel="canonical" href="https://shpanier.github.io/reins-edu/">
+  <link rel="alternate" hreflang="he" href="https://shpanier.github.io/reins-edu/he/">
+  <link rel="alternate" hreflang="en" href="https://shpanier.github.io/reins-edu/">
+  <meta property="og:title" content="REINS Edu: the lecturer holds the reins">
+  <meta property="og:description" content="An AI tutor for programming labs that the lecturer controls. Open source, runs on your own computer.">
+  <meta property="og:image" content="https://shpanier.github.io/reins-edu/img/dashboard-notifications.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="img/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="img/mark.svg" alt="" width="32" height="32">REINS Edu</a>
+    <nav aria-label="Sections">
+      <a href="#control">What you control</a>
+      <a href="#class">A class</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/Shpanier/reins-edu">GitHub</a>
+      <a class="lang" href="he/" lang="he" hreflang="he">עברית</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <p class="eyebrow">Reviewed Explanations, Instructor-Navigated Steps</p>
+    <h1><span>An AI tutor for programming labs.</span> <span>The lecturer holds the reins.</span></h1>
+    <p class="lead">Students work through a lab in a chat with an AI tutor that guides instead of handing out answers.
+      You see every conversation live, approve or rewrite answers before they reach a student, and keep the whole
+      class on the same step.</p>
+    <div class="actions">
+      <a class="btn primary" href="#install">Install</a>
+      <a class="btn" href="https://github.com/Shpanier/reins-edu">Source on GitHub</a>
+    </div>
+    <p class="note">Free and open source (MIT). It runs on your own computer; students need only a browser.</p>
+    <figure>
+      <img src="img/dashboard-notifications.png" width="2880" height="1800"
+           alt="The lecturer's dashboard: the open step, six students on steps A1 to A3, and two pop-ups for questions that wait for the lecturer.">
+      <figcaption>The lecturer's dashboard during a lab. Two questions wait for an answer. The class shown is invented.</figcaption>
+    </figure>
+  </div>
+
+  <section id="control">
+    <div class="wrap">
+      <h2>What the lecturer controls</h2>
+      <p class="sub">Students already use AI. REINS Edu puts it inside the lab, where you can see it and steer it.</p>
+      <ul class="grid">
+        <li class="card"><h3>Every answer can wait for you</h3>
+          <p>In review mode a student's question is held. The tutor drafts several answers, from a small nudge to a
+            full explanation. You pick one, edit it or write your own, and only then does the student see it.</p></li>
+        <li class="card"><h3>The class moves together</h3>
+          <p>A class-paced lab opens one step at a time for everyone. You see who finished each step, open the next
+            one when the class is ready, and move a single student back or forward.</p></li>
+        <li class="card"><h3>A tutor that guides</h3>
+          <p>The tutor answers with hints and questions, and follows the notes you write for each exercise. It does
+            not hand over the solution.</p></li>
+        <li class="card"><h3>Check that they understand</h3>
+          <p>After a step, or whenever you choose, students get a short question, and their answers come back to
+            you.</p></li>
+        <li class="card"><h3>You notice in time</h3>
+          <p>A pop-up and a bell tell you when a student asks a question, finishes a step or answers you, whatever
+            part of the dashboard you are looking at.</p></li>
+        <li class="card"><h3>It stays on your computer</h3>
+          <p>Accounts, chats and grades are kept on the lecturer's computer, and nothing is sent to the authors.
+            Questions go to the model provider you choose, Anthropic or Google, with your own API key.</p></li>
+      </ul>
+      <figure>
+        <img src="img/dashboard-pacing.png" width="2500" height="660" loading="lazy"
+             alt="Class pacing in the dashboard: step A1 is open, buttons to open the next step or close this one, and a count of students per step.">
+        <figcaption>Class pacing: which step is open, and how many students finished each step, are on it now, or wait for your answer.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="class">
+    <div class="wrap">
+      <h2>A class, start to finish</h2>
+      <p class="sub">Students install nothing. They open one link and sign in.</p>
+      <ol class="grid steps">
+        <li class="card"><h3>Write or upload a lab</h3>
+          <p>A lab is a folder: the steps students see, and the notes and expected answers only you see. Three
+            samples are included.</p></li>
+        <li class="card"><h3>Share one link</h3>
+          <p>Add your students from a CSV file, in English or Hebrew, and press <em>Share with students</em>.</p></li>
+        <li class="card"><h3>Teach</h3>
+          <p>Watch the chats, approve the tutor's answers, and open the next step when the class is ready.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <h2>Install</h2>
+      <p class="sub">For macOS, Windows and Linux. You need about 1.5 GB of disk space and an internet connection.
+        The first start installs Python and everything else into the program's own folder.</p>
+      <div class="cmd">
+        <h3>macOS or Linux, in the Terminal</h3>
+        <div class="line"><code>curl -fsSL https://raw.githubusercontent.com/Shpanier/reins-edu/main/install.sh | bash</code><button type="button" data-copy>Copy</button></div>
+      </div>
+      <div class="cmd">
+        <h3>Windows, in PowerShell</h3>
+        <div class="line"><code>irm https://raw.githubusercontent.com/Shpanier/reins-edu/main/install.ps1 | iex</code><button type="button" data-copy>Copy</button></div>
+      </div>
+      <ul class="plain">
+        <li>The first start downloads about 350 MB and takes a few minutes. Later starts take seconds.</li>
+        <li>The dashboard opens at <code>http://localhost:8010</code> and asks you to create your account.</li>
+        <li>Then it asks for an API key from Anthropic or Google. The key stays on your computer, and you pay the
+          provider for what your class uses.</li>
+      </ul>
+      <div class="links">
+        <a class="btn" href="https://github.com/Shpanier/reins-edu/blob/main/docs/GUIDE.md">Lecturer's guide</a>
+        <a class="btn" href="https://github.com/Shpanier/reins-edu/blob/main/examples/README.md">Writing exercises</a>
+        <a class="btn" href="https://github.com/Shpanier/reins-edu/blob/main/docs/DEVELOPMENT.md">Development</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Code: MIT. Educational materials: CC BY 4.0.</p>
+    <p>Built at the Software Engineering Seminar, Azrieli College of Engineering Jerusalem (JCE).
+      Questions, ideas, collaboration: <a href="https://github.com/Shpanier/reins-edu#license-and-contact">contact</a>.</p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll("[data-copy]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var label = b.textContent;
+      navigator.clipboard.writeText(b.previousElementSibling.textContent).then(function () {
+        b.textContent = b.dataset.done || "Copied";
+        setTimeout(function () { b.textContent = label; }, 1500);
+      });
+    });
+  });
+</script>
+</body>
+</html>

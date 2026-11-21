@@ -74,6 +74,7 @@ config/exercises/   the three sample exercises that ship with REINS Edu
 examples/           a sample package and the package format
 reins_mcp/          MCP tools for writing exercises with a coding agent
 scripts/            account and exercise helpers
+site/               the project page, published by .github/workflows/pages.yml
 tests/
 ```
 
