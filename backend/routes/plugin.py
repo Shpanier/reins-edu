@@ -44,7 +44,7 @@ _PRODUCTS = ("clion", "pycharm")
 # rewritten: the server URL (so it points back at whatever host served it) and,
 # for the install-<product>.sh endpoints, the product to pin to.
 _INSTALLER = Path(__file__).resolve().parents[2] / "scripts" / "update_plugin.sh"
-_DEFAULT_LINE = 'DEFAULT_SERVER="https://upgrade-nape-smasher.ngrok-free.dev"'
+_DEFAULT_LINE = re.compile(r'^DEFAULT_SERVER="[^"\n]*"$', re.M)
 _DEFAULT_PRODUCT_LINE = 'DEFAULT_PRODUCT=""'
 
 
@@ -86,7 +86,7 @@ async def publish_plugin(
         raise HTTPException(422, "Body is not a .zip (missing PK signature).")
 
     version = _SAFE.sub("_", version.strip()) or "0"
-    stored_name = f"vericlass-{product}-plugin-{version}.zip"
+    stored_name = f"reins-edu-{product}-plugin-{version}.zip"
     DIST_DIR.mkdir(parents=True, exist_ok=True)
     (DIST_DIR / stored_name).write_bytes(data)
 
@@ -126,7 +126,7 @@ def _serve_installer(request: Request, product: str | None) -> PlainTextResponse
         proto = request.headers.get(
             "x-forwarded-proto", "https" if "ngrok" in host else request.url.scheme
         )
-        text = text.replace(_DEFAULT_LINE, f'DEFAULT_SERVER="{proto}://{host}"')
+        text = _DEFAULT_LINE.sub(lambda _: f'DEFAULT_SERVER="{proto}://{host}"', text, count=1)
     if product:
         text = text.replace(_DEFAULT_PRODUCT_LINE, f'DEFAULT_PRODUCT="{product}"')
     return PlainTextResponse(text, media_type="text/x-shellscript")

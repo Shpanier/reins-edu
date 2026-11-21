@@ -1,4 +1,4 @@
-"""VeriClass terminal: the policy handed to the plugin, the command log, and the
+"""REINS Edu terminal: the policy handed to the plugin, the command log, and the
 alert a refused command raises on the dashboard."""
 import os
 import tempfile

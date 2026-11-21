@@ -83,7 +83,8 @@ def test_reply_offers_ask_again_with_the_strong_model(client, llm):
     r = client.post("/api/ask", json={"session_id": sid, "message": "What is a pipe?"}, headers=h)
     assert r.status_code == 200
     assert r.text == "short answer"
-    assert r.headers["X-VeriClass-Reask"] == "Sonnet 5.5"
+    assert r.headers["X-Reins-Reask"] == "Sonnet 5.5"
+    assert r.headers["X-VeriClass-Reask"] == "Sonnet 5.5"  # what a plugin built before the rename reads
     assert _assistant_rows(sid) == [{"body": "short answer", "model": "claude-haiku-5-5", "cached": 0}]
 
 
@@ -94,7 +95,7 @@ def test_ask_again_sends_the_question_without_the_first_answer(client, llm):
                     headers=h)
     assert r.status_code == 200
     assert r.text == "a long, detailed answer"
-    assert "X-VeriClass-Reask" not in r.headers  # no "ask again" on the strong answer itself
+    assert "X-Reins-Reask" not in r.headers  # no "ask again" on the strong answer itself
     assert llm[-1] == [{"role": "user", "content": "How does fork work?"}]
     rows = _assistant_rows(sid)
     assert rows[-1] == {"body": "a long, detailed answer", "model": STRONG, "cached": 0}
@@ -154,7 +155,7 @@ def test_ask_again_turned_off_or_unknown_question(client, llm, monkeypatch):
                        headers=h).status_code == 400
     monkeypatch.setattr(student_llm, "STRONG_MODEL", "")
     r = client.post("/api/ask", json={"session_id": sid, "message": "What is a pipe?"}, headers=h)
-    assert "X-VeriClass-Reask" not in r.headers
+    assert "X-Reins-Reask" not in r.headers
     assert client.post("/api/ask", json={"session_id": sid, "message": "What is a pipe?", "reask": True},
                        headers=h).status_code == 400
 

@@ -34,8 +34,8 @@ tests/test_grading.py
 crewaiagentsmemory.bundle
 OS_Lab_HE.pptx
 
-# VeriClass terminal: BusyBox binaries fetched by vericlass_plugin/packaging/fetch_busybox.sh
-vericlass_plugin/busybox/
+# REINS Edu terminal: BusyBox binaries fetched by reins_plugin/packaging/fetch_busybox.sh
+reins_plugin/busybox/
 
 # Local secrets backups and tunnel logs
 .env.backup*

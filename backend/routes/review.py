@@ -62,7 +62,7 @@ from backend.agents import llm as agent_llm
 from backend.agents import tutor
 from backend.prompts import course_name
 
-log = logging.getLogger("vericlass.review")
+log = logging.getLogger("reins.review")
 
 router = APIRouter()
 

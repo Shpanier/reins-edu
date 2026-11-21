@@ -94,7 +94,7 @@ export function Topbar({ tab, onTab, settings, plugin, bell, onShare, onSettings
     <header className="vc-topbar">
       <div className="vc-topbar__inner">
         <Brand />
-        <nav className="vc-nav" aria-label="VeriClass">
+        <nav className="vc-nav" aria-label="REINS Edu">
           {tabs.map(({ key, label, icon }) => (
             <button key={key} type="button" className="vc-nav__item" aria-current={tab === key ? "page" : undefined}
                     onClick={() => onTab(key)}>

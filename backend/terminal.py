@@ -1,4 +1,4 @@
-"""Rules for the VeriClass terminal (the plugin's checked + logged terminal).
+"""Rules for the REINS Edu terminal (the plugin's checked + logged terminal).
 
 An exercise may carry an optional `terminal:` block:
 

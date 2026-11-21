@@ -117,7 +117,7 @@ export function useNotifications(): Notifications {
   const unread = useMemo(
     () => items.filter((n) => !seenAt || n.created_at > seenAt).length, [items, seenAt]);
 
-  // "(3 🔔) VeriClass": unread notifications show in the browser tab too.
+  // "(3 🔔) REINS Edu": unread notifications show in the browser tab too.
   useEffect(() => {
     setTitleBadge("notifications", unread > 0 ? `(${unread} 🔔)` : null);
     return () => setTitleBadge("notifications", null);

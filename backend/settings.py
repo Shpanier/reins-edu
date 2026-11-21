@@ -5,7 +5,7 @@ language of the student chat), so a lecturer never has to open the file. A
 change is applied to the running server at once: the modules that read these
 values at import time are told to read them again (`configure()` in each).
 
-Tests point VERICLASS_ENV_FILE at a throwaway file.
+Tests point REINS_ENV_FILE at a throwaway file.
 """
 import os
 import re
@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Any, Optional
 
 import httpx
+
+from backend import names
 
 ROOT = Path(__file__).resolve().parent.parent
 VERSION = "1.0.0"
@@ -39,7 +41,7 @@ CHAT_LANGUAGES = ("auto", "he", "en")
 
 
 def env_file() -> Path:
-    return Path(os.environ.get("VERICLASS_ENV_FILE") or (ROOT / ".env"))
+    return Path(names.env("ENV_FILE") or (ROOT / ".env"))
 
 
 _LINE = re.compile(r"^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=")

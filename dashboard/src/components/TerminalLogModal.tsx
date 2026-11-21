@@ -8,7 +8,7 @@ import { formatDateTime, parseServerTime } from "../lib/time";
 import { Button, Check, EmptyState, Loading, Modal, Notice, Time, useToast } from "./ui";
 
 /**
- * One student's VeriClass-terminal log (IDE plugin): every line they entered,
+ * One student's REINS Edu terminal log (IDE plugin): every line they entered,
  * newest first: what ran (exit code, output) and what the plugin refused (and
  * why). Polls every 2s like the other live viewers. "Only refused commands"
  * narrows the list to the alerts.

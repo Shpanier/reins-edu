@@ -18,7 +18,7 @@
   },
   "auth": {
     "login": {
-      "title": "כניסה ל־VeriClass",
+      "title": "כניסה ל־REINS Edu",
       "form": {
         "email": {
           "label": "שם משתמש",

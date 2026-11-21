@@ -1,4 +1,4 @@
-/* VeriClass student chat. public/vericlass-chat.js sets dir="rtl" on every
+/* REINS Edu student chat. public/reins-chat.js sets dir="rtl" on every
    paragraph, list, heading and table with Hebrew in it, dir="ltr" on the rest.
    Code always stays left to right. Chainlit 2.x renders a Markdown paragraph as
    <div role="article">. */
@@ -27,7 +27,7 @@
   unicode-bidi: isolate;
 }
 
-/* Chainlit's own labels in Hebrew (public/vericlass-chat.js marks them). */
+/* Chainlit's own labels in Hebrew (public/reins-chat.js marks them). */
 [dir="rtl"] { text-align: start; }
 input[dir="rtl"]::placeholder, textarea[dir="rtl"]::placeholder { text-align: right; }
 

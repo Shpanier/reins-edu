@@ -4,8 +4,8 @@ import { api, type Overview } from "../api";
 import { useLang, type StringKey } from "../i18n";
 import { Button } from "../components/ui";
 
-const HIDDEN_KEY = "vericlass.firstSteps.hidden";
-const SHARED_KEY = "vericlass.firstSteps.shared";
+const HIDDEN_KEY = "reins.firstSteps.hidden";
+const SHARED_KEY = "reins.firstSteps.shared";
 
 function flag(key: string): boolean {
   try { return localStorage.getItem(key) === "1"; } catch { return false; }

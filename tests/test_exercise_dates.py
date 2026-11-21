@@ -42,7 +42,7 @@ def test_packages_have_both_dates_and_samples_none(client):
     listed = _listed(client, _th(client))
     for e in listed.values():
         if e["source"] == "yaml":
-            # A bundled sample's file time is only when VeriClass was installed.
+            # A bundled sample's file time is only when REINS Edu was installed.
             assert e["added_at"] is None and e["changed_at"] is None, e
         else:
             assert ISO.fullmatch(e["added_at"]) and ISO.fullmatch(e["changed_at"]), e

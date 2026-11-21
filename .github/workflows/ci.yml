@@ -1,4 +1,4 @@
-# Tests, and checks that VeriClass installs and works, on Linux, macOS and Windows,
+# Tests, and checks that REINS Edu installs and works, on Linux, macOS and Windows,
 # each on Intel/AMD and on ARM.
 name: CI
 
@@ -38,9 +38,9 @@ jobs:
           exit $status
       - name: Starts, and a lecturer and a student can use it
         env:
-          VERICLASS_ENV_FILE: ${{ runner.temp }}/ci.env
+          REINS_ENV_FILE: ${{ runner.temp }}/ci.env
           DB_PATH: ${{ runner.temp }}/ci.db
-          VERICLASS_DATA_DIR: ${{ runner.temp }}/ci-data
+          REINS_DATA_DIR: ${{ runner.temp }}/ci-data
         run: |
           # The environment's own Python, not `uv run`: a uv process left running
           # holds uv's cache lock, and the setup-uv cleanup step then fails.
@@ -68,8 +68,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     env:
-      VERICLASS_REPO: https://github.com/${{ github.repository }}
-      VERICLASS_BRANCH: ${{ github.ref_name }}
+      REINS_REPO: https://github.com/${{ github.repository }}
+      REINS_BRANCH: ${{ github.ref_name }}
       SCRIPTS: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
@@ -79,7 +79,7 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         env:
-          VERICLASS_DIR: ${{ runner.temp }}/Veri Class שיעור
+          REINS_DIR: ${{ runner.temp }}/REINS Edu שיעור
         run: |
           command -v uv && echo "(uv was already installed here)" || echo "(no uv: start.sh installs it)"
           curl -fsSL "$SCRIPTS/install.sh" | bash -s -- --no-browser > install.log 2>&1 &
@@ -88,10 +88,10 @@ jobs:
             sleep 3
           done
           cat install.log
-          py="$VERICLASS_DIR/.venv/bin/python"
+          py="$REINS_DIR/.venv/bin/python"
           "$py" -c "import platform, sys; print(sys.version, platform.machine())"
           set +e
-          "$py" checkout/.github/smoke.py http://127.0.0.1:8010 "$VERICLASS_DIR" 30
+          "$py" checkout/.github/smoke.py http://127.0.0.1:8010 "$REINS_DIR" 30
           status=$?
           pkill -f "backend.cli" || true
           exit $status
@@ -99,7 +99,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: powershell
         env:
-          VERICLASS_DIR: ${{ runner.temp }}\Veri Class שיעור
+          REINS_DIR: ${{ runner.temp }}\REINS Edu שיעור
         run: |
           $ErrorActionPreference = "Continue"
           if (Get-Command uv -ErrorAction SilentlyContinue) { "(uv was already installed here)" } else { "(no uv: start.bat installs it)" }
@@ -114,12 +114,12 @@ jobs:
           }
           if (-not $up) {
             "::error title=Install::The server didn't start (the installer's window exited: $($win.HasExited))."
-            Get-ChildItem $env:VERICLASS_DIR -Force -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }
+            Get-ChildItem $env:REINS_DIR -Force -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }
             exit 1
           }
-          $py = Join-Path $env:VERICLASS_DIR ".venv\Scripts\python.exe"
+          $py = Join-Path $env:REINS_DIR ".venv\Scripts\python.exe"
           & $py -c "import platform, sys; print(sys.version, platform.machine())"
-          & $py checkout\.github\smoke.py http://127.0.0.1:8010 "$env:VERICLASS_DIR" 30
+          & $py checkout\.github\smoke.py http://127.0.0.1:8010 "$env:REINS_DIR" 30
           $status = $LASTEXITCODE
           Get-Process python, uv -ErrorAction SilentlyContinue | Stop-Process -Force
           Stop-Process -Id $win.Id -Force -ErrorAction SilentlyContinue
@@ -129,8 +129,8 @@ jobs:
         timeout-minutes: 6
         shell: cmd
         env:
-          VERICLASS_DIR: ${{ runner.temp }}\Veri Class שיעור
-        run: call "%VERICLASS_DIR%\start.bat" --no-browser --port 8012 < NUL
+          REINS_DIR: ${{ runner.temp }}\REINS Edu שיעור
+        run: call "%REINS_DIR%\start.bat" --no-browser --port 8012 < NUL
 
   dashboard:
     name: Dashboard

@@ -32,7 +32,7 @@ import { NotificationBell, NotificationPopups } from "./app/Notifications";
 import { exerciseTitle } from "./lib/exerciseOrder";
 
 // The exercise the live view follows, remembered across reloads.
-const LIVE_KEY = "vericlass.liveExercise";
+const LIVE_KEY = "reins.liveExercise";
 
 function savedLiveId(): string | null {
   try { return localStorage.getItem(LIVE_KEY); } catch { return null; }

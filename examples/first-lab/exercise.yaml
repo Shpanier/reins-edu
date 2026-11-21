@@ -14,7 +14,7 @@ pacing: class
 open_steps: 1
 
 brief_md: |
-  **Welcome!** Three short steps to try VeriClass.
+  **Welcome!** Three short steps to try REINS Edu.
 
   Each step tells you what to run. When you finish a step, click **Done** and
   paste what your terminal printed. Ask the tutor here whenever you are stuck:
@@ -47,7 +47,7 @@ steps:
     title: "Say hello"
     minutes: 5
     text: |
-      Create a file `hello.py` with one line that prints `Hello, VeriClass!`,
+      Create a file `hello.py` with one line that prints `Hello, REINS Edu!`,
       then run it:
 
       ```bash

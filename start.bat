@@ -1,7 +1,7 @@
 @echo off
-rem Start VeriClass on Windows: double-click this file.
+rem Start REINS Edu on Windows: double-click this file.
 rem
-rem The first start installs what VeriClass needs into this folder (Python
+rem The first start installs what REINS Edu needs into this folder (Python
 rem included, through the tool "uv"); later starts take a few seconds. Then the
 rem lecturer's dashboard opens in the browser.
 rem
@@ -14,14 +14,14 @@ rem Exercises are written in UTF-8 (Hebrew too); Windows defaults to an older en
 set PYTHONUTF8=1
 set "PATH=%USERPROFILE%\.local\bin;%PATH%"
 rem Windows on ARM (Snapdragon laptops, Windows on a Mac in Parallels): several packages
-rem VeriClass uses have no ARM build for Windows, so it runs the x64 Python, which
+rem REINS Edu uses have no ARM build for Windows, so it runs the x64 Python, which
 rem Windows runs by emulation.
 if /i "%PROCESSOR_ARCHITECTURE%"=="ARM64" set "UV_PYTHON=cpython-3.12-windows-x86_64-none"
 if /i "%PROCESSOR_ARCHITEW6432%"=="ARM64" set "UV_PYTHON=cpython-3.12-windows-x86_64-none"
 
 where uv >nul 2>nul
 if errorlevel 1 (
-  echo ==^> Installing uv ^(it installs Python and the packages VeriClass needs^)...
+  echo ==^> Installing uv ^(it installs Python and the packages REINS Edu needs^)...
   powershell -NoProfile -ExecutionPolicy ByPass -Command "irm https://astral.sh/uv/install.ps1 | iex"
 )
 where uv >nul 2>nul
@@ -38,7 +38,7 @@ if not exist .venv (
 uv run --frozen python -m backend.cli %*
 if errorlevel 1 (
   echo.
-  echo VeriClass stopped with an error ^(see above^).
+  echo REINS Edu stopped with an error ^(see above^).
   pause
 )
 endlocal

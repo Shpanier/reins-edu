@@ -1,13 +1,13 @@
-"""`vericlass`: start everything with one command.
+"""`reins`: start everything with one command.
 
 One server on one port: the lecturer's dashboard at /, the students' chat at
 /chat, the API under /api. The start scripts (start.command, start.bat,
-start.sh) run this; so does `uv run vericlass`.
+start.sh) run this; so does `uv run reins`.
 
-    vericlass                 start on port 8010 and open the dashboard
-    vericlass --port 8020     another port
-    vericlass --lan           also reachable from the local network (same Wi-Fi)
-    vericlass --no-browser    don't open the browser
+    reins                 start on port 8010 and open the dashboard
+    reins --port 8020     another port
+    reins --lan           also reachable from the local network (same Wi-Fi)
+    reins --no-browser    don't open the browser
 """
 import argparse
 import os
@@ -47,7 +47,7 @@ def _port_free(host: str, port: int) -> bool:
     return True
 
 
-def _is_vericlass(port: int) -> bool:
+def _is_reins(port: int) -> bool:
     try:
         with urllib.request.urlopen(f"http://127.0.0.1:{port}/healthz", timeout=1.5) as r:
             return r.status == 200
@@ -72,7 +72,7 @@ def _keep_awake() -> None:
 
 def _open_when_ready(port: int) -> None:
     for _ in range(240):
-        if _is_vericlass(port):
+        if _is_reins(port):
             try:
                 webbrowser.open(f"http://localhost:{port}/")
             except Exception:
@@ -109,12 +109,14 @@ def main(argv: list[str] | None = None) -> None:
     from dotenv import load_dotenv
 
     _first_env_file()
-    load_dotenv(os.environ.get("VERICLASS_ENV_FILE") or ROOT / ".env")
+    from backend import names
 
-    parser = argparse.ArgumentParser(prog="vericlass", description="Start VeriClass: the lecturer's "
+    load_dotenv(names.env("ENV_FILE") or ROOT / ".env")
+
+    parser = argparse.ArgumentParser(prog="reins", description="Start REINS Edu: the lecturer's "
                                      "dashboard and the students' chat, on one port.")
-    parser.add_argument("--port", type=int, default=int(os.environ.get("VERICLASS_PORT") or 8010))
-    parser.add_argument("--host", default=os.environ.get("VERICLASS_HOST") or "127.0.0.1",
+    parser.add_argument("--port", type=int, default=int(names.env("PORT") or 8010))
+    parser.add_argument("--host", default=names.env("HOST") or "127.0.0.1",
                         help="the address to listen on (default: this computer only)")
     parser.add_argument("--lan", action="store_true",
                         help="listen on every network address, so students on the same Wi-Fi can connect")
@@ -125,16 +127,16 @@ def main(argv: list[str] | None = None) -> None:
     host = "0.0.0.0" if args.lan else args.host
 
     if not _port_free("127.0.0.1" if host in ("0.0.0.0", "::") else host, args.port):
-        if _is_vericlass(args.port):
-            print(f"\n  VeriClass is already running: http://localhost:{args.port}/\n")
+        if _is_reins(args.port):
+            print(f"\n  REINS Edu is already running: http://localhost:{args.port}/\n")
             if not args.no_browser:
                 webbrowser.open(f"http://localhost:{args.port}/")
             return
         sys.exit(f"\n  Port {args.port} is used by another program. Start on a different one:\n"
-                 f"      vericlass --port {args.port + 10}\n")
+                 f"      reins --port {args.port + 10}\n")
 
-    os.environ["VERICLASS_PORT"] = str(args.port)
-    os.environ["VERICLASS_HOST"] = host
+    os.environ[names.ENV_PREFIX + "PORT"] = str(args.port)
+    os.environ[names.ENV_PREFIX + "HOST"] = host
     os.environ["BACKEND_URL"] = f"http://127.0.0.1:{args.port}"
     if args.no_chat:
         os.environ["STUDENT_CHAT_PATH"] = ""
@@ -147,7 +149,7 @@ def main(argv: list[str] | None = None) -> None:
 
     import uvicorn
 
-    print("\n  Starting VeriClass (the first start takes a little longer)...", flush=True)
+    print("\n  Starting REINS Edu (the first start takes a little longer)...", flush=True)
     uvicorn.run("backend.main:app", host=host, port=args.port, log_level="warning")
 
 

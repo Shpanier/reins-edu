@@ -1,3 +1,3 @@
 # Source
 
-A sample written for the VeriClass repository. Never served to students.
+A sample written for the REINS Edu repository. Never served to students.

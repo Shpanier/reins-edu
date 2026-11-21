@@ -3599,7 +3599,7 @@ wheels = [
 ]
 
 [[package]]
-name = "vericlass"
+name = "reins-edu"
 version = "1.0.0"
 source = { virtual = "." }
 dependencies = [

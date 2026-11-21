@@ -24,7 +24,7 @@ Zipping: on macOS right-click the folder → *Compress*; on Windows right-click 
 *Send to → Compressed (zipped) folder*. The zip may hold the folder itself or
 its contents.
 
-Installed packages live in `data/exercises/<exercise_id>/` in the VeriClass
+Installed packages live in `data/exercises/<exercise_id>/` in the REINS Edu
 folder. You can also edit those files directly and press *Reload from disk* on
 the Exercises tab, and *Export* gives any exercise back as a zip.
 
@@ -95,7 +95,7 @@ variants:
 ```
 
 Each student always gets the same version. Without `variants`, everyone gets
-the same exercise. The three samples that ship with VeriClass
+the same exercise. The three samples that ship with REINS Edu
 (`config/exercises/`) use versions.
 
 ## teacher.yaml
@@ -151,8 +151,8 @@ About 50 questions cover most of what a class asks.
   Markdown file: `uv run python scripts/steps_from_markdown.py <folder>/source.md`
   writes exercise.yaml and teacher.yaml from it (the format is at the top of
   the script).
-- **With a coding agent.** The MCP server in `vericlass_mcp/` gives Claude Code
-  (or another MCP client) tools for your own VeriClass: start a package, check
+- **With a coding agent.** The MCP server in `reins_mcp/` gives Claude Code
+  (or another MCP client) tools for your own REINS Edu: start a package, check
   it, install it, import students, read an anonymized class report. See
   [docs/DEVELOPMENT.md](../docs/DEVELOPMENT.md#writing-exercises-with-a-coding-agent).
 - **In the dashboard.** *Exercises → New exercise* writes a simple exercise

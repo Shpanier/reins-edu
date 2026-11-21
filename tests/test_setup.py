@@ -86,7 +86,7 @@ def test_first_account_checks_its_fields(client, body, part):
 def test_env_file_keeps_other_lines_and_comments(tmp_path, monkeypatch):
     env = tmp_path / ".env"
     env.write_text("# my notes\nFIRST_KEY=old\nOTHER=1\n", encoding="utf-8")
-    monkeypatch.setenv("VERICLASS_ENV_FILE", str(env))
+    monkeypatch.setenv("REINS_ENV_FILE", str(env))
     monkeypatch.setenv("FIRST_KEY", "old")   # save_env sets the process's values too:
     monkeypatch.setenv("SOME_NEW_KEY", "")   # have them restored after the test
     settings.save_env({"FIRST_KEY": "new", "SOME_NEW_KEY": "a value with spaces"})
@@ -158,7 +158,7 @@ def test_chat_language_setting(client, teacher):
 
 
 def test_share_gives_the_chat_link(client, teacher, monkeypatch):
-    monkeypatch.setenv("VERICLASS_PORT", "8123")
+    monkeypatch.setenv("REINS_PORT", "8123")
     monkeypatch.setenv("STUDENT_CHAT_PATH", "/chat")
     monkeypatch.setattr(tunnel, "_external_ngrok", lambda: None)
     s = client.get("/api/share", headers=teacher).json()

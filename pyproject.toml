@@ -1,5 +1,5 @@
 [project]
-name = "vericlass"
+name = "reins-edu"
 version = "1.0.0"
 description = "A lecturer-controlled AI tutor for programming classes: the lecturer's dashboard and the students' chat."
 readme = "README.md"

@@ -3,11 +3,14 @@ import sqlite3
 from contextlib import contextmanager
 from pathlib import Path
 
-# A relative DB_PATH is relative to the VeriClass folder, not to wherever a
+from backend import names
+
+# A relative DB_PATH is relative to the REINS Edu folder, not to wherever a
 # script happens to be started from.
-DB_PATH = Path(os.environ.get("DB_PATH") or "vericlass.db").expanduser()
+_FOLDER = Path(__file__).resolve().parent.parent
+DB_PATH = Path(os.environ.get("DB_PATH") or names.default_db(_FOLDER)).expanduser()
 if not DB_PATH.is_absolute():
-    DB_PATH = Path(__file__).resolve().parent.parent / DB_PATH
+    DB_PATH = _FOLDER / DB_PATH
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS users (
@@ -241,7 +244,7 @@ CREATE TABLE IF NOT EXISTS api_audit_log (
 -- possible cheating. 'kind' is one of:
 --   exam_started | focus_lost | minimized | fullscreen_exited
 --   | focus_regained | window_restored
---   | blocked_command (a refused VeriClass-terminal line; written by the backend)
+--   | blocked_command (a refused REINS Edu terminal line; written by the backend)
 --   | stock_terminal_opened (tried to open the IDE's own Terminal in exam mode)
 --   | fullscreen_restored
 --   | tool_window_opened (a panel outside the exam allowlist; already re-hidden)
@@ -282,7 +285,7 @@ CREATE TABLE IF NOT EXISTS submissions (
     FOREIGN KEY (session_id) REFERENCES sessions(id)
 );
 
--- VeriClass terminal log: every line a student enters in the plugin's checked
+-- REINS Edu terminal log: every line a student enters in the plugin's checked
 -- terminal, whether it ran or was refused. A refused line (allowed = 0, not a
 -- syntax error) is also written to proctor_events as 'blocked_command'.
 CREATE TABLE IF NOT EXISTS terminal_commands (
@@ -318,7 +321,7 @@ CREATE TABLE IF NOT EXISTS terminal_output (
     PRIMARY KEY (session_id, client_id, seq)
 );
 
--- Every paste the exam client saw (editor, VeriClass terminal, chat box), with
+-- Every paste the exam client saw (editor, REINS Edu terminal, chat box), with
 -- the text. source: 'outside' (the clipboard came from another app), 'ide'
 -- (copied inside the IDE), 'tutor' (a code block's Copy button in the chat).
 CREATE TABLE IF NOT EXISTS pastes (

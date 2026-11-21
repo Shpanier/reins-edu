@@ -11,8 +11,8 @@ Each entry is (Hebrew, English). {name} is filled by text(key, lang, name=...).
 
 TEXTS: dict[str, tuple[str, str]] = {
     # --- signing in (only when the chat asks; the sign-in page has its own labels) ---
-    "ask_username": ("🎓 ברוכים הבאים ל־VeriClass. הקלידו את שם המשתמש שלכם.",
-                     "🎓 Welcome to VeriClass. Type your username."),
+    "ask_username": ("🎓 ברוכים הבאים ל־REINS Edu. הקלידו את שם המשתמש שלכם.",
+                     "🎓 Welcome to REINS Edu. Type your username."),
     "no_username": ("לא התקבל שם משתמש. רעננו את הדף כדי לנסות שוב.",
                     "No username was received. Reload the page to try again."),
     "ask_password": ("עכשיו את הסיסמה. (עד שהמרצה משנה אותה, היא זהה לשם המשתמש.)",

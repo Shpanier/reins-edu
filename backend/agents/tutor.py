@@ -100,7 +100,7 @@ def _build_crew(system_prompt: str, transcript: str, student_question: str, leve
     llm = (claude_llm(model, timeout=TIMEOUT_SEC, max_tokens=MAX_TOKENS) if model
            else gemini_llm(timeout=TIMEOUT_SEC, max_tokens=MAX_TOKENS))
     agent = Agent(
-        role="VeriClass teaching assistant",
+        role="REINS Edu teaching assistant",
         goal="Draft bilingual help a teacher will review before it reaches the student.",
         backstory=(
             f"You assist an instructor in a {course} lab. You never hand "

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Start VeriClass on macOS or Linux:   ./start.sh
+# Start REINS Edu on macOS or Linux:   ./start.sh
 #
-# The first start installs what VeriClass needs into this folder (Python
+# The first start installs what REINS Edu needs into this folder (Python
 # included, through the tool "uv"); later starts take a few seconds. Then the
 # lecturer's dashboard opens in the browser.
 #
@@ -13,7 +13,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH:/opt/homebrew/bin:/usr/local/bin"
 
 if ! command -v uv >/dev/null 2>&1; then
-  echo "==> Installing uv (it installs Python and the packages VeriClass needs)..."
+  echo "==> Installing uv (it installs Python and the packages REINS Edu needs)..."
   if command -v curl >/dev/null 2>&1; then
     curl -LsSf https://astral.sh/uv/install.sh | sh
   elif command -v wget >/dev/null 2>&1; then

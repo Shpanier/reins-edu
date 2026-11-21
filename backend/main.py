@@ -7,7 +7,10 @@ from pathlib import Path
 # import time (e.g. gemini_student.MODEL, agents.llm.DEFAULT_MODEL), so .env has
 # to be in os.environ first or those constants freeze to their defaults.
 from dotenv import load_dotenv
-load_dotenv(os.environ.get("VERICLASS_ENV_FILE") or Path(__file__).resolve().parent.parent / ".env")
+
+from backend import names  # reads nothing at import time
+
+load_dotenv(names.env("ENV_FILE") or Path(__file__).resolve().parent.parent / ".env")
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -79,7 +82,7 @@ def _banner() -> None:
     console may not print anything else)."""
     port = tunnel.port()
     chat = tunnel.chat_path()
-    lines = ["", "  VeriClass is running. Keep this window open during the class.", ""]
+    lines = ["", "  REINS Edu is running. Keep this window open during the class.", ""]
     if (WEB_DIR / "index.html").is_file():
         lines.append(f"    Lecturer's dashboard:  http://localhost:{port}/")
     else:
@@ -104,7 +107,7 @@ def _banner() -> None:
 # The interactive API pages (/docs) would be public through the tunnel; they are
 # for development (API_DOCS=true).
 _DOCS = os.environ.get("API_DOCS", "").strip().lower() in ("1", "true", "yes", "on")
-app = FastAPI(title="VeriClass Backend", lifespan=lifespan, version=settings.VERSION,
+app = FastAPI(title="REINS Edu Backend", lifespan=lifespan, version=settings.VERSION,
               docs_url="/docs" if _DOCS else None, redoc_url=None,
               openapi_url="/openapi.json" if _DOCS else None)
 

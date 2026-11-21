@@ -104,7 +104,7 @@ export function Brand() {
   return (
     <span className="vc-brand">
       <span className="vc-brand__mark"><GraduationCap /></span>
-      VeriClass
+      REINS Edu
     </span>
   );
 }

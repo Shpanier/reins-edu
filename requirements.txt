@@ -58,7 +58,7 @@ certifi==2026.6.17
 cffi==2.0.0 ; platform_python_implementation != 'PyPy'
     # via cryptography
 chainlit==2.11.1
-    # via vericlass
+    # via reins-edu
 charset-normalizer==3.4.7
     # via
     #   pdfminer-six
@@ -86,7 +86,7 @@ colorama==0.4.6
 coloredlogs==15.0.1
     # via onnxruntime
 crewai==0.130.0
-    # via vericlass
+    # via reins-edu
 cryptography==48.0.1 ; platform_machine == 'x86_64' and sys_platform == 'darwin'
     # via
     #   auth0-python
@@ -118,7 +118,7 @@ executing==2.2.1
 fastapi==0.138.1
     # via
     #   chainlit
-    #   vericlass
+    #   reins-edu
 filelock==3.29.4
     # via huggingface-hub
 filetype==1.2.0
@@ -160,7 +160,7 @@ httpx==0.28.1
     #   literalai
     #   mcp
     #   openai
-    #   vericlass
+    #   reins-edu
 httpx-sse==0.4.3
     # via mcp
 huggingface-hub==1.21.0
@@ -221,7 +221,7 @@ lazify==0.4.0
 litellm==1.72.0
     # via
     #   crewai
-    #   vericlass
+    #   reins-edu
 literalai==0.1.201
     # via chainlit
 markdown-it-py==4.2.0
@@ -588,8 +588,8 @@ pydantic==2.13.4
     #   mcp
     #   openai
     #   pydantic-settings
+    #   reins-edu
     #   traceloop-sdk
-    #   vericlass
 pydantic-core==2.46.4
     # via
     #   auth0-python
@@ -626,8 +626,8 @@ python-dotenv==1.0.1
     #   crewai
     #   litellm
     #   pydantic-settings
+    #   reins-edu
     #   uvicorn
-    #   vericlass
 python-engineio==4.13.3
     # via python-socketio
 python-multipart==0.0.32
@@ -645,8 +645,8 @@ pyyaml==6.0.2
     #   chromadb
     #   huggingface-hub
     #   kubernetes
+    #   reins-edu
     #   uvicorn
-    #   vericlass
 referencing==0.37.0
     # via
     #   jsonschema
@@ -675,9 +675,9 @@ rpds-py==2026.5.1
     #   jsonschema
     #   referencing
 ruamel-yaml==0.19.1
-    # via vericlass
+    # via reins-edu
 setuptools==80.10.2
-    # via vericlass
+    # via reins-edu
 shellingham==1.5.4
     # via typer
 simple-websocket==1.1.0
@@ -783,7 +783,7 @@ uvicorn==0.49.0
     #   chainlit
     #   chromadb
     #   mcp
-    #   vericlass
+    #   reins-edu
 uvloop==0.22.1 ; platform_python_implementation != 'PyPy' and sys_platform != 'cygwin' and sys_platform != 'win32'
     # via uvicorn
 watchfiles==1.2.0

@@ -40,7 +40,7 @@ import type {
 import { ApiError } from "./lib/errors";
 import { connection } from "./lib/connection";
 
-const TOKEN_KEY = "vericlass.teacher.token";
+const TOKEN_KEY = "reins.teacher.token";
 
 export const auth = {
   get: () => localStorage.getItem(TOKEN_KEY),

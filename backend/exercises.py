@@ -393,7 +393,7 @@ def dates() -> dict[str, dict[str, Optional[str]]]:
     folder was made (installed; its oldest file where the system doesn't keep
     that), changed = its newest file. One made in the dashboard: its database
     row's times. A bundled sample: no date of its own (its file time is only
-    when VeriClass was installed or updated); changed = the lecturer's last
+    when REINS Edu was installed or updated); changed = the lecturer's last
     edit of it, or of its question bank, if any."""
     with db.conn() as c:
         rows = {r["exercise_id"]: r for r in c.execute(

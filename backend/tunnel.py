@@ -26,7 +26,7 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Optional
 
-from backend import packages
+from backend import names, packages
 
 log = logging.getLogger(__name__)
 
@@ -40,12 +40,11 @@ _state: dict[str, Any] = {"state": "off", "provider": None, "url": None, "error"
 
 
 def port() -> int:
-    """The port this server listens on (the launcher sets VERICLASS_PORT)."""
-    for name in ("VERICLASS_PORT",):
-        try:
-            return int(os.environ.get(name, ""))
-        except ValueError:
-            pass
+    """The port this server listens on (the launcher sets REINS_PORT)."""
+    try:
+        return int(names.env("PORT") or "")
+    except ValueError:
+        pass
     m = re.search(r":(\d+)", os.environ.get("BACKEND_URL", ""))
     return int(m.group(1)) if m else 8010
 
@@ -219,7 +218,7 @@ def status() -> dict[str, Any]:
     elif t["url"]:
         t = {**t, "url": t["url"].rstrip("/") + suffix}
     p = port()
-    host = os.environ.get("VERICLASS_HOST", "127.0.0.1").strip()
+    host = (names.env("HOST") or "127.0.0.1").strip()
     lan = [f"http://{a}:{p}{suffix}" for a in lan_addresses()] if host in ("0.0.0.0", "::") else []
     return {
         "chat_mounted": bool(path),
@@ -270,7 +269,7 @@ def download_cloudflared() -> str:
     target_dir.mkdir(parents=True, exist_ok=True)
     exe = target_dir / ("cloudflared.exe" if os.name == "nt" else "cloudflared")
     tmp = target_dir / (asset + ".part")
-    req = urllib.request.Request(_RELEASE + asset, headers={"User-Agent": "VeriClass"})
+    req = urllib.request.Request(_RELEASE + asset, headers={"User-Agent": "reins-edu"})
     with urllib.request.urlopen(req, timeout=120) as r, tmp.open("wb") as f:
         shutil.copyfileobj(r, f)
     if asset.endswith(".tgz"):

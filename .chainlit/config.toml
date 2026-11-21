@@ -1,4 +1,4 @@
-# The students' chat (student_app/app.py, Chainlit 2.x). Served by the VeriClass
+# The students' chat (student_app/app.py, Chainlit 2.x). Served by the REINS Edu
 # server at /chat, or on its own with: chainlit run student_app/app.py
 
 [project]
@@ -30,15 +30,15 @@ favorites = false
     enabled = false
 
 [UI]
-name = "VeriClass"
+name = "REINS Edu"
 description = "Your lab's tutor and steps"
 default_theme = "dark"
 default_sidebar_state = "hidden"
 confirm_new_chat = true
 cot = "hidden"
 alert_style = "modern"
-custom_css = "/public/vericlass-chat.css"
-custom_js = "/public/vericlass-chat.js"
+custom_css = "/public/reins-chat.css"
+custom_js = "/public/reins-chat.js"
 login_page_image = "/public/login.svg"
 # Show the picture as it is (Chainlit greys out its own default picture).
 login_page_image_filter = "brightness-100"

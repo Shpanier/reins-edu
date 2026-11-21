@@ -1,11 +1,11 @@
 """What the tutor should know about where the student works: the operating
 system (plugin 0.4.3+ sends it when the session starts and with every question;
-older plugins only with terminal lines), which shell the VeriClass terminal runs,
+older plugins only with terminal lines), which shell the REINS Edu terminal runs,
 and what that terminal allows. In October 2026 the tutor blamed a long number for
 an error that really came from Windows; this block is the fix."""
 from typing import Any, Optional
 
-from backend import db, terminal
+from backend import db, names, terminal
 
 _MAX_OS = 80
 
@@ -69,12 +69,13 @@ def tutor_block(session_id: str, ex: dict[str, Any]) -> str:
         "linux": "BusyBox",
         "macos": "the system shell (/bin/sh with the BSD versions of awk, sed and grep)",
     }.get(fam, "BusyBox on Windows and Linux, the system shell on macOS")
+    plugin = names.plugin_name()
     lines = [
         "STUDENT ENVIRONMENT (use it when you diagnose an error):",
         f"- Operating system: {os_name}." if os_name else
         "- Operating system: not reported yet (most students use Windows).",
-        f"- The VeriClass terminal at the bottom of PyCharm runs each line in {shell}.",
-        "- Programs allowed in the VeriClass terminal: " + ", ".join(policy["allow"])
+        f"- The {plugin} terminal at the bottom of PyCharm runs each line in {shell}.",
+        f"- Programs allowed in the {plugin} terminal: " + ", ".join(policy["allow"])
         + ". Anything else is refused there and reported to the teacher.",
     ]
     if policy.get("blocked_hint"):

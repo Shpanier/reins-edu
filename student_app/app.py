@@ -25,7 +25,7 @@ BACKEND = os.environ.get("BACKEND_URL", "http://127.0.0.1:8010")
 for noisy in ("httpx", "httpcore", "socketio", "engineio", "asyncio", "watchfiles", "uvicorn.access"):
     logging.getLogger(noisy).setLevel(logging.WARNING)
 
-log = logging.getLogger("vericlass.student")
+log = logging.getLogger("reins.student")
 
 
 # With CHAINLIT_AUTH_SECRET set (make one with `chainlit create-secret`), Chainlit
@@ -772,7 +772,7 @@ async def _ask(text: str):
                 json={"session_id": session_id, "message": text},
                 # This chat shows the transcript: an answer the teacher sends after
                 # the wait ended still reaches the student (backend/routes/review.py).
-                headers={"Authorization": f"Bearer {token}", "X-VeriClass-Transcript": "1"},
+                headers={"Authorization": f"Bearer {token}", "X-Reins-Transcript": "1"},
             ) as resp:
                 if resp.status_code != 200:
                     # Read the error body instead of streaming it in as if it
@@ -781,7 +781,7 @@ async def _ask(text: str):
                     out.content = _ask_error_message(resp.status_code)
                     await out.update()
                     return
-                if resp.headers.get("X-VeriClass-Review"):
+                if resp.headers.get("X-Reins-Review"):
                     # The answer waits for the teacher, maybe for minutes. Meanwhile the
                     # chat isn't busy: the student can answer a question, finish a step,
                     # or ask something else.

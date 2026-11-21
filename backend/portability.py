@@ -1,7 +1,7 @@
 """Same terminal commands, every OS: find exercise commands that behave
 differently on Windows and macOS.
 
-The VeriClass terminal runs BusyBox on Windows and Linux, and /bin/bash with the
+The REINS Edu terminal runs BusyBox on Windows and Linux, and /bin/bash with the
 BSD tools on macOS (the IDE plugin's terminal, on the pycharm-plugin branch). A command that works on the
 teacher's Mac can fail, or print something else, on a student's Windows laptop.
 

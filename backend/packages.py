@@ -1,9 +1,9 @@
 """Exercise packages: one folder per exercise, in the lecturer's private data
-folder (VERICLASS_DATA_DIR, default ../VeriClassPrivateData next to the code). The
+folder (REINS_DATA_DIR, default ../ReinsPrivateData next to the code). The
 folder is the source of truth: the server loads it, the dashboard writes its
 edits back into it, and nothing in it goes to git.
 
-    VeriClassPrivateData/exercises/<exercise_id>/
+    ReinsPrivateData/exercises/<exercise_id>/
       exercise.yaml   what students and the tutor see (same keys as config/exercises/*.yaml;
                       `variants` is optional)
       teacher.yaml    teacher-only, per step: expected, os_check, evidence, questions, and for a
@@ -32,20 +32,19 @@ from typing import Any, Optional
 
 import yaml
 
-from backend import bank, portability, terminal, textutil
+from backend import bank, names, portability, terminal, textutil
 
 logger = logging.getLogger(__name__)
 
 _REPO = Path(__file__).resolve().parent.parent
 def _default_data_dir() -> Path:
     """A lecturer who already keeps the private folder next to the code
-    (../VeriClassPrivateData) stays with it. A new install keeps its data in
+    (../ReinsPrivateData) stays with it. A new install keeps its data in
     data/, inside the folder and never in git."""
-    sibling = _REPO.parent / "VeriClassPrivateData"
-    return sibling if sibling.is_dir() else _REPO / "data"
+    return names.private_dir(_REPO.parent) or _REPO / "data"
 
 
-DATA_DIR = Path(os.environ.get("VERICLASS_DATA_DIR") or _default_data_dir()).expanduser()
+DATA_DIR = Path(names.env("DATA_DIR") or _default_data_dir()).expanduser()
 
 EXERCISE_FILE = "exercise.yaml"
 TEACHER_FILE = "teacher.yaml"

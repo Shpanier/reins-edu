@@ -2,7 +2,7 @@
 
 ## Run from source
 
-VeriClass uses [uv](https://docs.astral.sh/uv/) for Python and its packages
+REINS Edu uses [uv](https://docs.astral.sh/uv/) for Python and its packages
 (`pyproject.toml`, locked in `uv.lock`), and Node 18+ for the dashboard.
 
 ```bash
@@ -11,7 +11,7 @@ cd dashboard && npm ci && npm run dev    # the dashboard with hot reload, at htt
 ```
 
 `npm run dev` proxies `/api` to `http://127.0.0.1:8010` (another server:
-`VERICLASS_API=http://127.0.0.1:8020 npm run dev`). Changes to `student_app/`
+`REINS_API=http://127.0.0.1:8020 npm run dev`). Changes to `student_app/`
 or `backend/` need a server restart.
 
 The server is one process (`backend/cli.py` → `uvicorn backend.main:app`):
@@ -44,7 +44,7 @@ classes in `dashboard/src/styles/`, building blocks in
 Hebrew (`dashboard/src/i18n.tsx`, `dashboard/src/i18n/<area>.ts`).
 
 `npm run build` type-checks and writes the dashboard into `backend/web/`, which
-is committed: lecturers run VeriClass without Node. Rebuild and commit it with
+is committed: lecturers run REINS Edu without Node. Rebuild and commit it with
 every dashboard change.
 
 ## The students' chat
@@ -52,16 +52,17 @@ every dashboard change.
 `student_app/app.py` (Chainlit 2.x). Everything the chat itself says is in
 `student_app/chat_texts.py`, in Hebrew and English; Chainlit's own labels are
 in `.chainlit/translations/{en-US,he-IL}.json`; the look is in `public/`
-(`theme.json`, logos, `vericlass-chat.css`, and `vericlass-chat.js`, which lays
+(`theme.json`, logos, `reins-chat.css`, and `reins-chat.js`, which lays
 Hebrew out right to left).
 
 ## Layout
 
 ```
 backend/            FastAPI server
-  cli.py            the `vericlass` command the start scripts run
+  cli.py            the `reins` command the start scripts run
   main.py           the app: routes, the chat mount, the dashboard
   settings.py       .env read and written by the dashboard's Settings
+  names.py          the project's name in settings, headers and file names
   tunnel.py         the students' link: cloudflared / ngrok
   routes/           the API (setup.py: first run, settings, sharing)
   agents/           drafted answers, suggested questions, grading (CrewAI)
@@ -69,9 +70,9 @@ backend/            FastAPI server
   web/              the built dashboard (generated)
 student_app/        the students' chat
 dashboard/          the lecturer's dashboard (source)
-config/exercises/   the three sample exercises that ship with VeriClass
+config/exercises/   the three sample exercises that ship with REINS Edu
 examples/           a sample package and the package format
-vericlass_mcp/      MCP tools for writing exercises with a coding agent
+reins_mcp/          MCP tools for writing exercises with a coding agent
 scripts/            account and exercise helpers
 tests/
 ```
@@ -82,10 +83,17 @@ All settings are in `.env` (see `.env.example`, which documents each one). The
 dashboard writes the provider, the API key and the chat language there; the
 running server picks those up at once. Anything else needs a restart.
 
+Settings named `REINS_…`, the `X-Reins-…` headers and the default names of the
+database and the private folder are read through `backend/names.py`. It also
+accepts the names used before the project was renamed (November 2026), so an
+older install and the plugins students already have keep working. A plugin
+from before the rename shows its older name on its panels: set
+`REINS_PLUGIN_NAME` to it so the tutor calls the terminal what students see.
+
 ## Writing exercises with a coding agent
 
-`vericlass_mcp/` is an MCP server that gives a coding agent (Claude Code or
-any MCP client) tools for your own running VeriClass: create a package in
+`reins_mcp/` is an MCP server that gives a coding agent (Claude Code or
+any MCP client) tools for your own running REINS Edu: create a package in
 `data/drafts/`, check it (`validate_exercise`), install it (`push_exercise`,
 optionally into a course or as a dated meeting), import students, and read an
 anonymized class report. It authenticates with a key the server keeps in its
@@ -93,13 +101,14 @@ data folder, so it works only on the same computer.
 
 ```bash
 ./start.sh                      # once, so .venv exists; keep it running
-bash scripts/install_mcp.sh     # registers "vericlass" with Claude Code for this folder
+bash scripts/install_mcp.sh     # registers "reins" with Claude Code for this folder
 ```
 
 ## The IDE plugin
 
 A PyCharm plugin (the same chat in the IDE, an exam mode, a monitored
-terminal) lives on the `pycharm-plugin` branch. The server here keeps the
+terminal) is used in class; its source is not in this repository yet. The
+server here keeps the
 plugin's API, and the dashboard shows the plugin's screens (exam monitoring,
 terminal log, submissions) once a plugin was used with this server, or with
 `PLUGIN_UI=on` in `.env`.

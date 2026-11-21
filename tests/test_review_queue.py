@@ -645,6 +645,7 @@ def test_environment_block_for_windows(client):
     environment.remember_os(sid, "Windows 11 amd64")
     text = environment.tutor_block(sid, exercises.get("ex3-mcalc"))
     assert "Windows 11 amd64" in text and "busybox-w32" in text and "backslash" in text
+    assert "The REINS Edu terminal at the bottom of PyCharm" in text  # named as the plugin shows it
     # The plugin also sends it with each question.
     _, sid2 = _student(client)
     client.post("/api/ask", json={"session_id": sid2, "message": "hi", "client_os": "Mac OS X 15.5 aarch64"},
@@ -656,7 +657,7 @@ def test_environment_block_for_windows(client):
 
 def _ask_bg(tc, h, sid, message, transcript_client=True):
     box = {}
-    headers = {**h, **({"X-VeriClass-Transcript": "1"} if transcript_client else {})}
+    headers = {**h, **({"X-Reins-Transcript": "1"} if transcript_client else {})}
 
     def run():
         box["r"] = tc.post("/api/ask", json={"session_id": sid, "message": message}, headers=headers)

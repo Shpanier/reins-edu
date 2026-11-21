@@ -1,6 +1,8 @@
-# VeriClass
+# REINS Edu
 
 > English · [עברית](README.he.md)
+
+*Reviewed Explanations, Instructor-Navigated Steps: the lecturer holds the reins.*
 
 **An AI tutor for programming labs that the lecturer controls.** Students work
 through a lab in a web chat with an AI tutor that guides rather than hands out
@@ -20,22 +22,22 @@ only a browser and a link.
 ## Install
 
 You need about 1.5 GB of disk space and an internet connection. Nothing else:
-the first start installs Python and everything VeriClass needs into its own
+the first start installs Python and everything REINS Edu needs into its own
 folder.
 
 **macOS or Linux.** In the Terminal:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Shpanier/VeriClass/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Shpanier/reins-edu/main/install.sh | bash
 ```
 
 **Windows.** In PowerShell:
 
 ```powershell
-irm https://raw.githubusercontent.com/Shpanier/VeriClass/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/Shpanier/reins-edu/main/install.ps1 | iex
 ```
 
-This puts VeriClass in a `VeriClass` folder in your home folder and starts it.
+This puts REINS Edu in a `REINS-Edu` folder in your home folder and starts it.
 The first start downloads about 350 MB and takes a few minutes; later starts
 take seconds. The dashboard opens in your browser.
 
@@ -46,11 +48,11 @@ take seconds. The dashboard opens in your browser.
 
 | | |
 |---|---|
-| **macOS** | Double-click `start.command` in the VeriClass folder. (The first time: right-click it → *Open* → *Open*.) |
+| **macOS** | Double-click `start.command` in the REINS Edu folder. (The first time: right-click it → *Open* → *Open*.) |
 | **Windows** | Double-click `start.bat`. |
 | **Linux** (or any terminal) | `./start.sh` |
 
-A window opens and stays open while VeriClass runs: **keep it open during the
+A window opens and stays open while REINS Edu runs: **keep it open during the
 class**, and close it (or press Ctrl+C) to stop. On macOS and Windows the
 computer won't go to sleep while it runs. The dashboard is at
 **http://localhost:8010**.
@@ -58,7 +60,7 @@ computer won't go to sleep while it runs. The dashboard is at
 ## First run: two steps in the browser
 
 1. **Create your account**: your name, a username and a password. (This can
-   only be done on the computer that runs VeriClass.)
+   only be done on the computer that runs REINS Edu.)
 2. **Connect the AI tutor**: choose a provider and paste an API key from your
    account there.
 
@@ -67,7 +69,7 @@ computer won't go to sleep while it runs. The dashboard is at
    - **Google Gemini**: <https://aistudio.google.com/apikey>
 
    The key is checked with the provider before it is saved, and it is stored
-   only on your computer, in the file `.env` in the VeriClass folder. You pay the
+   only on your computer, in the file `.env` in the REINS Edu folder. You pay the
    provider for what your class uses. You can change it any time in
    **Settings** (the status button at the top of the dashboard).
 
@@ -115,7 +117,7 @@ written directly in the dashboard (*Exercises → New exercise*).
 - **Update**: run the install line again (or download the new ZIP over the old
   folder). Your settings, database and exercises are kept.
 - **Back up or move to another computer**: copy three things from the
-  VeriClass folder: `.env` (settings and API key), `vericlass.db` (accounts,
+  REINS Edu folder: `.env` (settings and API key), `reins.db` (accounts,
   courses and every conversation) and `data/` (your exercises). *Settings*
   shows where they are.
 
@@ -124,10 +126,10 @@ written directly in the dashboard (*Exercises → New exercise*).
 | What you see | What to do |
 |---|---|
 | "Port 8010 is used by another program" | Start on another port: `./start.sh --port 8020` (Windows: `start.bat --port 8020`). |
-| Students can't open the link | Check that the window running VeriClass is still open and the computer is awake, then *Share with students* again. |
+| Students can't open the link | Check that the window running REINS Edu is still open and the computer is awake, then *Share with students* again. |
 | "The tutor can't answer right now" in the chat | The dashboard's status button says why (no key, a refused key, a spending limit). |
 | Students on the same Wi-Fi only, no internet link | Start with `--lan` and give them the address *Share with students* shows under "Same Wi-Fi". |
-| Forgot your password | In a terminal in the VeriClass folder: `uv run python scripts/set_password.py <username>` |
+| Forgot your password | In a terminal in the REINS Edu folder: `uv run python scripts/set_password.py <username>` |
 
 ## More
 
@@ -138,13 +140,13 @@ written directly in the dashboard (*Exercises → New exercise*).
   dashboard's design system, the MCP tools for writing exercises with a coding
   agent.
 - **IDE plugin.** A PyCharm plugin with the same chat inside the IDE, an exam
-  mode and a monitored terminal lives on the
-  [`pycharm-plugin`](https://github.com/Shpanier/VeriClass/tree/pycharm-plugin) branch.
+  mode and a monitored terminal is used in class. Its source is not in this
+  repository yet; write to me if you want it.
 
 ## License and contact
 
 Code: [MIT](LICENSE). Educational materials (exercises, briefs, documentation):
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). If you use VeriClass
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). If you use REINS Edu
 in teaching or research, please cite it ([CITATION.cff](CITATION.cff)) and let
 me know how it went.
 

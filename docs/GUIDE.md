@@ -1,17 +1,17 @@
 # Lecturer's guide
 
-How VeriClass works in class, and the settings behind each part. To install
+How REINS Edu works in class, and the settings behind each part. To install
 and start, see the [README](../README.md); to write exercises, see
 [examples/README.md](../examples/README.md).
 
-- [Why VeriClass](#why-vericlass)
+- [Why REINS Edu](#why-reins-edu)
 - [Three ways to steer the tutor](#three-ways-to-steer-the-tutor)
 - [Courses, students and meetings](#courses-students-and-meetings)
 - [Class-paced labs](#class-paced-labs)
 - [Sharing with students](#sharing-with-students)
 - [Privacy](#privacy)
 
-## Why VeriClass
+## Why REINS Edu
 
 LLM use in introductory programming courses is no longer optional: students
 *are* using ChatGPT / Copilot / Gemini whether we want them to or not. The
@@ -168,7 +168,7 @@ closed the chat, their connection dropped, the 10-minute wait ran out, or the
 server restarted. An answer to a question nobody waits for is not lost: it is
 stored and goes into the student's chat transcript, so the student chat shows it
 at once if it is open again, or after their next login (a client that can show
-it says so with `X-VeriClass-Transcript: 1`; for any other, such as the IDE
+it says so with `X-Reins-Transcript: 1`; for any other, such as the IDE
 plugin, a timeout still closes the question). **Delete** removes a question
 sent by mistake or no longer relevant; with *tell the student* (default, off for
 questions that look sent by mistake) a waiting student is told at once, and one
@@ -200,7 +200,7 @@ When a student sends you something, a notification pops up inside the dashboard
 (not a browser or system notification), on whatever tab or exercise you are
 looking at, with a short chime. The bell in the top bar counts the new ones and
 lists the last 12 hours; opening it marks them seen, and the browser tab's title
-shows the count too ("(3 🔔) VeriClass").
+shows the count too ("(3 🔔) REINS Edu").
 
 | Kind | When | Open takes you to |
 |---|---|---|
@@ -221,7 +221,7 @@ Settings (*Settings → Notifications*, or the bell's *Settings*): which kinds
 notify, and the sound. Stored in `system_settings` as `notify_kinds` (comma
 separated) and `notify_sound` (`on`/`off`); `GET/POST /api/notifications/config`.
 The feed is `GET /api/notifications?since=<the previous call's now>`
-(`backend/notifications.py`): it reads the rows VeriClass already keeps
+(`backend/notifications.py`): it reads the rows REINS Edu already keeps
 (`pending_reviews`, `step_checks`, `probes`, `submissions`, `messages`), so every
 client and every exercise is covered. Each lecturer's "seen up to" is in
 `notification_seen` (`POST /api/notifications/seen`). Browsers play the chime
@@ -268,9 +268,9 @@ Everything here is in the dashboard's **Courses & students** tab.
 - **Meetings.** A course can list its meetings (a date and an exercise): on
   that date its students open the meeting's exercise without choosing, and the
   meeting shows who came.
-- **More than one lecturer** can sign in to the same VeriClass: add them with
+- **More than one lecturer** can sign in to the same REINS Edu: add them with
   `uv run python scripts/add_students.py --teachers "Name"` in a terminal.
-  Lecturer accounts work only in a browser on the computer that runs VeriClass
+  Lecturer accounts work only in a browser on the computer that runs REINS Edu
   (`TEACHER_LOCAL_ONLY` in `.env`).
 
 ## Class-paced labs
@@ -376,7 +376,7 @@ teachers can read any session's transcript.
 |---|---|---|
 | `chat_history: false` | exercise.yaml, or *Keep the chat history* in the exercise editor | on |
 | `output_in_chat: confirm \| accept \| ask \| off` | exercise.yaml, or the exercise editor; a chat message while a step is open: `confirm` accepts a full match and asks about anything else, `accept` asks only about a partial match, `ask` asks about any match, `off` treats every message as a question | `confirm` |
-| `answer_in_chat: detect \| confirm \| answer` | exercise.yaml, or the exercise editor; a chat message while a quiz or teacher's question is open (the question doesn't lock the chat, so the student can still ask): `detect` takes it as the answer unless it looks like a question (a question mark, a question word, "I don't understand"), and then asks "your answer, or a question of yours?"; `confirm` always asks; `answer` always takes it as the answer. "Done", or a message that matches the open step's output checks, still goes to the step. A question of the student's own goes to the tutor, or to the teacher in review mode; while it waits for the teacher (`X-VeriClass-Review` on the reply) the chat isn't busy, so the student can answer meanwhile | `detect` |
+| `answer_in_chat: detect \| confirm \| answer` | exercise.yaml, or the exercise editor; a chat message while a quiz or teacher's question is open (the question doesn't lock the chat, so the student can still ask): `detect` takes it as the answer unless it looks like a question (a question mark, a question word, "I don't understand"), and then asks "your answer, or a question of yours?"; `confirm` always asks; `answer` always takes it as the answer. "Done", or a message that matches the open step's output checks, still goes to the step. A question of the student's own goes to the tutor, or to the teacher in review mode; while it waits for the teacher (`X-Reins-Review` on the reply) the chat isn't busy, so the student can answer meanwhile | `detect` |
 | `quiz_review: zero \| partial \| off` | exercise.yaml, or the exercise editor; a quiz answer in a class-paced lab that waits for the lecturer's decision before the next step: `partial` when the grader gave it 0/2 or 1/2 (only 2/2 moves on by itself), `zero` only when it gave 0/2, `off` never (the grade is only recorded) | `partial` |
 | `resume_minutes: N` | exercise.yaml, or the exercise editor; how recent a session must be to be resumed, `0` = always | always for `pacing: class`, otherwise 30 |
 | `CHAT_HISTORY_REPLAY_MAX` | environment | 400 (the latest entries replayed after a login) |
@@ -426,14 +426,14 @@ chat" is a class rule. Copilot can be turned off in a template repository's
 
 ## Sharing with students
 
-Students open one link: the chat at `/chat/` on your VeriClass. **Share with
+Students open one link: the chat at `/chat/` on your REINS Edu. **Share with
 students** (top of the dashboard) shows it as text and as a QR code.
 
 | How | When | What to do |
 |---|---|---|
 | **Quick public link** (Cloudflare) | The default: any class, any network | *Share with students → Create a public link*. The first time, the dashboard downloads `cloudflared` (or install it yourself: `brew install cloudflared`, `winget install --id Cloudflare.cloudflared`). The address is new every time, so share it at the start of each class. |
 | **A fixed address** (ngrok) | The same link all semester | Install ngrok, sign in once (`ngrok config add-authtoken <token>`), claim your free static domain at <https://dashboard.ngrok.com>, and put it in `.env` as `NGROK_DOMAIN=your-name.ngrok-free.app`. *Create a public link* then uses it. The free plan has a monthly request limit that a large class can reach. |
-| **Your own address** | A college server, your own domain or Cloudflare tunnel | Run VeriClass there (or point your tunnel at port 8010) and set `STUDENT_URL=https://…/chat/` in `.env`: the dashboard shows it as the students' link. On a server, also set `TEACHER_LOCAL_ONLY=false` so you can reach the dashboard. |
+| **Your own address** | A college server, your own domain or Cloudflare tunnel | Run REINS Edu there (or point your tunnel at port 8010) and set `STUDENT_URL=https://…/chat/` in `.env`: the dashboard shows it as the students' link. On a server, also set `TEACHER_LOCAL_ONLY=false` so you can reach the dashboard. |
 | **Same Wi-Fi only** | A lab room without internet access to your computer | Start with `--lan` (`./start.sh --lan`, `start.bat --lan`). *Share with students* shows the address under "Same Wi-Fi". Your firewall may ask to allow incoming connections. |
 
 Keep the computer on, awake and online while students work: they are
@@ -445,12 +445,12 @@ this chat" is a class rule.
 
 ## Privacy
 
-VeriClass is used with students, so it keeps as little as possible outside the
+REINS Edu is used with students, so it keeps as little as possible outside the
 lecturer's computer.
 
 - **Where data is kept.** Accounts, courses, every conversation, quiz answers
-  and grades are in `vericlass.db`, and exercises in `data/`, both in the
-  VeriClass folder on your computer. Nothing is sent to the VeriClass authors.
+  and grades are in `reins.db`, and exercises in `data/`, both in the
+  REINS Edu folder on your computer. Nothing is sent to the REINS Edu authors.
 - **The LLM provider** you chose (Anthropic or Google) receives what the tutor
   needs to answer: the student's messages, the conversation so far, the lab's
   text and your tutor notes. Its own terms apply; tell your students which
@@ -459,7 +459,7 @@ lecturer's computer.
   agents that draft answers for you, suggest questions and grade:
   `backend/sanitize.py` replaces students' names, ID numbers, emails and phone
   numbers. The tutor's direct answers get the student's messages as typed.
-- **No outside accounts.** Usernames are made by VeriClass; there is no single
+- **No outside accounts.** Usernames are made by REINS Edu; there is no single
   sign-on, and an email address is kept only if your CSV has one.
 - **The API key** is in `.env` on your computer, readable only by your user
   account. The dashboard never shows it again after it is saved.

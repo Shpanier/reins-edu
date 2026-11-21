@@ -65,7 +65,7 @@ export const studentsStrings = defineStrings(
     alerts: "Exam log: {n} alerts",
     openProctorLogTitle: "This student's exam log: leaving the IDE, other windows, pastes",
     openSubmissionsTitle: "The code this student sent, and what it printed",
-    openTerminalLogTitle: "Every command this student typed in the VeriClass terminal",
+    openTerminalLogTitle: "Every command this student typed in the REINS Edu terminal",
 
     // ---- the exam alert bar ----
     bannerAttention: "{n:# student needs|# students need} attention now",
@@ -124,7 +124,7 @@ export const studentsStrings = defineStrings(
     terminalSummary: "Commands: {n} · Refused: {refused}",
     terminalRefusedOnly: "Only refused commands",
     noTerminalCommands: "No terminal commands yet",
-    tlEmptyText: "Every command this student types in the VeriClass terminal appears here.",
+    tlEmptyText: "Every command this student types in the REINS Edu terminal appears here.",
     tlNoRefused: "No refused commands.",
     terminalRefused: "Refused",
     terminalSyntax: "Syntax error",
@@ -214,7 +214,7 @@ export const studentsStrings = defineStrings(
     alerts: "יומן בחינה: {n} התראות",
     openProctorLogTitle: "יומן הבחינה של הסטודנט: יציאות מה־IDE, חלונות אחרים, הדבקות",
     openSubmissionsTitle: "הקוד שהסטודנט שלח, ומה שהוא הדפיס",
-    openTerminalLogTitle: "כל הפקודות שהסטודנט הקליד בטרמינל של VeriClass",
+    openTerminalLogTitle: "כל הפקודות שהסטודנט הקליד בטרמינל של REINS Edu",
 
     bannerAttention: "{n:סטודנט אחד דורש|# סטודנטים דורשים} תשומת לב עכשיו",
     pbOneAttention: "סטודנט אחד דורש תשומת לב עכשיו",
@@ -269,7 +269,7 @@ export const studentsStrings = defineStrings(
     terminalSummary: "פקודות: {n} · נחסמו: {refused}",
     terminalRefusedOnly: "רק פקודות שנחסמו",
     noTerminalCommands: "עוד אין פקודות בטרמינל",
-    tlEmptyText: "כל פקודה שהסטודנט מקליד בטרמינל של VeriClass מופיעה כאן.",
+    tlEmptyText: "כל פקודה שהסטודנט מקליד בטרמינל של REINS Edu מופיעה כאן.",
     tlNoRefused: "אין פקודות שנחסמו.",
     terminalRefused: "נחסמה",
     terminalSyntax: "שגיאת תחביר",

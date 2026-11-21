@@ -8,13 +8,13 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from backend import (
-    answer_cache, bank, db, deps, environment, exercises, pacing, prompting, settings, steps, student_llm, textutil, transcript,
+    answer_cache, bank, db, deps, environment, exercises, names, pacing, prompting, settings, steps, student_llm, textutil, transcript,
 )
 from backend.routes import review as review_mod
 
 REVIEW_TIMEOUT_SECONDS = 600  # how long the student request waits for the teacher
 
-log = logging.getLogger("vericlass.ask")
+log = logging.getLogger("reins.ask")
 
 router = APIRouter()
 
@@ -38,10 +38,10 @@ class AskRequest(BaseModel):
 
 
 # Sent with replies that can be asked again; the value is the button's model name.
-REASK_HEADER = "X-VeriClass-Reask"
+REASK_HEADER = names.HEADER_PREFIX + "Reask"
 # Sent with a reply that waits for the teacher's review (up to REVIEW_TIMEOUT_SECONDS):
 # the student chat stays usable meanwhile instead of showing itself busy.
-REVIEW_HEADER = "X-VeriClass-Review"
+REVIEW_HEADER = names.HEADER_PREFIX + "Review"
 _REASK_INSTRUCTION = (
     "The student found a shorter answer to this question not detailed enough. Give a "
     "complete, detailed explanation, still following every rule above."
@@ -64,11 +64,11 @@ async def ask(req: AskRequest, request: Request, user: dict = Depends(deps.curre
         raise HTTPException(400, "Request looks like prompt injection — refused.")
 
     ex = exercises.get(s["exercise"])
-    environment.remember_os(req.session_id, req.client_os or request.headers.get("x-vericlass-client-os"))
+    environment.remember_os(req.session_id, req.client_os or names.header(request.headers, "Client-OS"))
     # Older IDE plugins (Java HTTP client) showed replies as plain text; newer ones
-    # announce Markdown support with X-VeriClass-Render.
+    # announce Markdown support with X-Reins-Render.
     plain = ("java" in request.headers.get("user-agent", "").lower()
-             and request.headers.get("x-vericlass-render", "").lower() != "markdown")
+             and names.header(request.headers, "Render").lower() != "markdown")
     sys_prompt = prompting.system_prompt_for(s, plain)
     if req.reask:
         return _reask(req, s, ex, sys_prompt)
@@ -113,11 +113,11 @@ async def ask(req: AskRequest, request: Request, user: dict = Depends(deps.curre
     if review_mod.review_mode_enabled():
         return StreamingResponse(
             _gen_review(req, s, sys_prompt, msgs, plain,
-                        # A client that shows the session's transcript (X-VeriClass-Transcript: 1,
+                        # A client that shows the session's transcript (X-Reins-Transcript: 1,
                         # the student chat) can receive an answer after it stopped waiting.
-                        late_ok=request.headers.get("x-vericlass-transcript") == "1"
+                        late_ok=names.header(request.headers, "Transcript") == "1"
                         and transcript.enabled(ex)),
-            media_type="text/plain", headers={REVIEW_HEADER: "1"},
+            media_type="text/plain", headers=names.response_headers("Review", "1"),
         )
 
     # Question bank (BANK_AUTO_ANSWER): a near-identical question gets its ready
@@ -150,7 +150,7 @@ async def ask(req: AskRequest, request: Request, user: dict = Depends(deps.curre
 
     headers = {}
     if student_llm.strong_available():
-        headers[REASK_HEADER] = student_llm.model_label(student_llm.STRONG_MODEL)
+        headers = names.response_headers("Reask", student_llm.model_label(student_llm.STRONG_MODEL))
     return StreamingResponse(gen(), media_type="text/plain", headers=headers)
 
 

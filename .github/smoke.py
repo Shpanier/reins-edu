@@ -1,9 +1,9 @@
-"""CI: a VeriClass that was just installed, used the way a new lecturer and a
+"""CI: a REINS Edu that was just installed, used the way a new lecturer and a
 student would. Waits for the server, then: the dashboard and the chat answer, the
 first lecturer account, the sample exercise uploaded as a zip (Hebrew included),
 a course with a student from a Hebrew CSV, and that student signing in to the chat.
 
-    python .github/smoke.py http://127.0.0.1:8010 <the VeriClass folder> [seconds to wait]
+    python .github/smoke.py http://127.0.0.1:8010 <the REINS Edu folder> [seconds to wait]
 
 Standard library only, so any Python runs it.
 """

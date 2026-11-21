@@ -1,7 +1,7 @@
-"""VeriClass MCP server: the lecturer's Claude Code session talks to their own
-VeriClass server through these tools. Each lecturer runs their own server; the
+"""REINS Edu MCP server: the lecturer's Claude Code session talks to their own
+REINS Edu server through these tools. Each lecturer runs their own server; the
 model doing the work is the lecturer's Claude Code session, so nothing here
-spends the VeriClass server's API tokens.
+spends the REINS Edu server's API tokens.
 
 Exercises are written as package folders (backend/packages.py) in the private
 data folder's drafts/, checked with validate_exercise, and installed with
@@ -10,9 +10,9 @@ back as anonymized numbers (session_report).
 
 Register it with Claude Code once (scripts/install_mcp.sh does this):
 
-    claude mcp add vericlass --scope local -- <repo>/.venv/bin/python <repo>/vericlass_mcp/server.py
+    claude mcp add reins --scope local -- <repo>/.venv/bin/python <repo>/reins_mcp/server.py
 
-It reaches the server at VERICLASS_URL (default http://127.0.0.1:8010) with the
+It reaches the server at REINS_URL (default http://127.0.0.1:8010) with the
 local key the server keeps in the private data folder (.local-token).
 """
 import io
@@ -31,18 +31,18 @@ import httpx  # noqa: E402
 from mcp.server.fastmcp import FastMCP  # noqa: E402
 from mcp.types import ToolAnnotations  # noqa: E402
 
-from backend import packages  # noqa: E402
+from backend import names, packages  # noqa: E402
 
-URL = os.environ.get("VERICLASS_URL", "http://127.0.0.1:8010").rstrip("/")
-TIMEOUT = float(os.environ.get("VERICLASS_MCP_TIMEOUT", "120"))
+URL = (names.env("URL") or "http://127.0.0.1:8010").rstrip("/")
+TIMEOUT = float(names.env("MCP_TIMEOUT") or "120")
 
 READ = ToolAnnotations(readOnlyHint=True, openWorldHint=False)
 WRITE = ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=False)
 
 mcp = FastMCP(
-    "vericlass",
+    "reins",
     instructions=(
-        "Tools for the lecturer's own VeriClass server: exercises (package folders: exercise.yaml, "
+        "Tools for the lecturer's own REINS Edu server: exercises (package folders: exercise.yaml, "
         "teacher.yaml, faq.yaml, files/), courses and meetings, students from CSV, and anonymized "
         "class reports. Write new exercises in drafts/ (new_exercise_folder), check them with "
         "validate_exercise until there are no errors, show the lecturer, and only then push_exercise. "
@@ -51,31 +51,31 @@ mcp = FastMCP(
 )
 
 
-# --- talking to the VeriClass server -------------------------------------------------
+# --- talking to the REINS Edu server -------------------------------------------------
 
 def _key() -> str:
     try:
         return (packages.DATA_DIR / ".local-token").read_text(encoding="utf-8").strip()
     except OSError:
         raise RuntimeError(
-            f"No local key in {packages.DATA_DIR}. Start the VeriClass server once on this computer; "
+            f"No local key in {packages.DATA_DIR}. Start the REINS Edu server once on this computer; "
             "it creates the key.")
 
 
 def _call(method: str, path: str, **kwargs) -> Any:
     try:
-        r = httpx.request(method, URL + path, headers={"X-VeriClass-Local-Token": _key()},
+        r = httpx.request(method, URL + path, headers={"X-Reins-Local-Token": _key()},
                           timeout=TIMEOUT, **kwargs)
     except httpx.ConnectError:
         raise RuntimeError(
-            f"The VeriClass server isn't running at {URL}. Start it (start.sh / start.bat, or "
+            f"The REINS Edu server isn't running at {URL}. Start it (start.sh / start.bat, or "
             ".venv/bin/uvicorn backend.main:app --port 8010) and try again.")
     if r.status_code >= 400:
         try:
             detail = r.json().get("detail")
         except Exception:
             detail = r.text[:300]
-        raise RuntimeError(f"VeriClass server: HTTP {r.status_code}: {detail}")
+        raise RuntimeError(f"REINS Edu server: HTTP {r.status_code}: {detail}")
     ctype = r.headers.get("content-type", "")
     return r.json() if "json" in ctype else r.content
 
@@ -90,7 +90,7 @@ def _drafts() -> Path:
 
 @mcp.tool(annotations=READ)
 def status() -> dict:
-    """Is the VeriClass server running; where the private data folder and drafts are;
+    """Is the REINS Edu server running; where the private data folder and drafts are;
     the installed exercises, the courses, and any exercise that failed to load."""
     out: dict[str, Any] = {"server": URL, "data_folder": str(packages.DATA_DIR),
                            "drafts_folder": str(_drafts()), "exercises_folder": str(packages.exercises_dir())}
@@ -129,7 +129,7 @@ def get_exercise(exercise_id: str) -> dict:
 _TEMPLATE_EXERCISE = """\
 # {title}
 # Written with the exercise skill. Students and the tutor see this file;
-# answers go in teacher.yaml. Keys: see VeriClassPrivateData/README.md and
+# answers go in teacher.yaml. Keys: see ReinsPrivateData/README.md and
 # backend/packages.py. `variants` is optional (leave it out: everyone gets the
 # same exercise).
 exercise_id: {eid}

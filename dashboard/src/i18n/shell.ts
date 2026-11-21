@@ -17,7 +17,7 @@ export const shellStrings = defineStrings(
     discardAsk: "You have changes that aren't saved.",
     keepEditing: "Keep editing",
     discard: "Discard changes",
-    errNetwork: "The VeriClass server can't be reached. Is it still running?",
+    errNetwork: "The REINS Edu server can't be reached. Is it still running?",
     errServer: "The server hit an error. Try again; if it repeats, look at the server's window.",
     errUnknown: "Something went wrong.",
     somethingBroke: "This part of the page stopped working.",
@@ -36,7 +36,7 @@ export const shellStrings = defineStrings(
     menuSignedIn: "Signed in as",
     menuSettings: "Settings",
     menuVerify: "Verify a student's log",
-    connLost: "The VeriClass server isn't answering. Trying again…",
+    connLost: "The REINS Edu server isn't answering. Trying again…",
 
     // sign-in
     loginTitle: "Sign in",
@@ -49,7 +49,7 @@ export const shellStrings = defineStrings(
     loginFoot: "Students use a different link: ask your lecturer for it.",
 
     // first run
-    frWelcome: "Welcome to VeriClass",
+    frWelcome: "Welcome to REINS Edu",
     frLead: "Two short steps and you're ready for a class.",
     frStepAccount: "Your account",
     frStepTutor: "The AI tutor",
@@ -62,11 +62,11 @@ export const shellStrings = defineStrings(
     frMismatch: "The two passwords are different.",
     frCreate: "Create my account",
     frRemoteTitle: "Finish the setup on the lecturer's computer",
-    frRemoteBody: "This VeriClass server has no lecturer account yet. For safety, the first account can only be created in a browser on the computer that runs VeriClass.",
+    frRemoteBody: "This REINS Edu server has no lecturer account yet. For safety, the first account can only be created in a browser on the computer that runs REINS Edu.",
 
     // the AI tutor (first run and settings)
     tuTitle: "Connect the AI tutor",
-    tuLead: "VeriClass answers students with a language model. Choose a provider and paste an API key from your account there; you pay the provider for what your class uses.",
+    tuLead: "REINS Edu answers students with a language model. Choose a provider and paste an API key from your account there; you pay the provider for what your class uses.",
     tuAnthropicNote: "Recommended: one key covers every feature.",
     tuGeminiNote: "Chat, drafts and grading. \"Ask again\" and the stronger drafts need an Anthropic key.",
     tuKey: "API key",
@@ -82,7 +82,7 @@ export const shellStrings = defineStrings(
     tuSaved: "The tutor is connected.",
     tuSavedUnchecked: "Saved. The key couldn't be checked (no internet?), so try a question before class.",
     tuModels: "Chat model: {chat} · Drafts and grading: {agent}",
-    tuModelsHint: "To use other models, edit the settings file and restart VeriClass.",
+    tuModelsHint: "To use other models, edit the settings file and restart REINS Edu.",
     tuLastError: "The last question failed: {error}",
     tuWorking: "The last question was answered.",
 
@@ -99,7 +99,7 @@ export const shellStrings = defineStrings(
     setEnv: "Settings file",
     setData: "Exercises and files",
     setDb: "Database",
-    setBackupHint: "To back up VeriClass or move it to another computer, copy these three.",
+    setBackupHint: "To back up REINS Edu or move it to another computer, copy these three.",
     setSaved: "Saved.",
 
     // the students' link
@@ -160,7 +160,7 @@ export const shellStrings = defineStrings(
     discardAsk: "יש שינויים שלא נשמרו.",
     keepEditing: "להמשיך לערוך",
     discard: "לבטל את השינויים",
-    errNetwork: "אין חיבור לשרת VeriClass. האם הוא עדיין פועל?",
+    errNetwork: "אין חיבור לשרת REINS Edu. האם הוא עדיין פועל?",
     errServer: "אירעה שגיאה בשרת. נסו שוב; אם זה חוזר, בדקו את חלון השרת.",
     errUnknown: "משהו השתבש.",
     somethingBroke: "החלק הזה של הדף הפסיק לעבוד.",
@@ -178,7 +178,7 @@ export const shellStrings = defineStrings(
     menuSignedIn: "מחובר/ת בשם",
     menuSettings: "הגדרות",
     menuVerify: "אימות יומן של סטודנט",
-    connLost: "שרת VeriClass לא עונה. מנסה שוב…",
+    connLost: "שרת REINS Edu לא עונה. מנסה שוב…",
 
     loginTitle: "כניסה",
     loginLead: "לוח הבקרה של המרצה",
@@ -189,7 +189,7 @@ export const shellStrings = defineStrings(
     loginNotTeacher: "זה חשבון של סטודנט. היכנסו עם חשבון של מרצה.",
     loginFoot: "לסטודנטים יש קישור אחר: בקשו אותו מהמרצה.",
 
-    frWelcome: "ברוכים הבאים ל־VeriClass",
+    frWelcome: "ברוכים הבאים ל־REINS Edu",
     frLead: "שני צעדים קצרים, ואפשר להתחיל שיעור.",
     frStepAccount: "החשבון שלך",
     frStepTutor: "העוזר",
@@ -202,10 +202,10 @@ export const shellStrings = defineStrings(
     frMismatch: "שתי הסיסמאות שונות.",
     frCreate: "יצירת החשבון",
     frRemoteTitle: "את ההתקנה מסיימים במחשב של המרצה",
-    frRemoteBody: "בשרת VeriClass הזה עוד אין חשבון מרצה. מטעמי בטיחות, את החשבון הראשון אפשר ליצור רק בדפדפן שבמחשב שמריץ את VeriClass.",
+    frRemoteBody: "בשרת REINS Edu הזה עוד אין חשבון מרצה. מטעמי בטיחות, את החשבון הראשון אפשר ליצור רק בדפדפן שבמחשב שמריץ את REINS Edu.",
 
     tuTitle: "חיבור העוזר",
-    tuLead: "VeriClass עונה לסטודנטים בעזרת מודל שפה. בחרו ספק והדביקו מפתח API מהחשבון שלכם אצלו; משלמים לספק לפי השימוש של הכיתה.",
+    tuLead: "REINS Edu עונה לסטודנטים בעזרת מודל שפה. בחרו ספק והדביקו מפתח API מהחשבון שלכם אצלו; משלמים לספק לפי השימוש של הכיתה.",
     tuAnthropicNote: "מומלץ: מפתח אחד מספיק לכל היכולות.",
     tuGeminiNote: "צ'אט, טיוטות ובדיקה. \"לשאול שוב\" והטיוטות החזקות דורשות מפתח של Anthropic.",
     tuKey: "מפתח API",
@@ -221,7 +221,7 @@ export const shellStrings = defineStrings(
     tuSaved: "העוזר מחובר.",
     tuSavedUnchecked: "נשמר. לא הצלחנו לבדוק את המפתח (אין אינטרנט?), אז כדאי לנסות שאלה לפני השיעור.",
     tuModels: "מודל הצ'אט: {chat} · טיוטות ובדיקה: {agent}",
-    tuModelsHint: "כדי להשתמש במודלים אחרים, ערכו את קובץ ההגדרות והפעילו את VeriClass מחדש.",
+    tuModelsHint: "כדי להשתמש במודלים אחרים, ערכו את קובץ ההגדרות והפעילו את REINS Edu מחדש.",
     tuLastError: "השאלה האחרונה נכשלה: {error}",
     tuWorking: "השאלה האחרונה נענתה.",
 
@@ -237,7 +237,7 @@ export const shellStrings = defineStrings(
     setEnv: "קובץ ההגדרות",
     setData: "תרגילים וקבצים",
     setDb: "מסד הנתונים",
-    setBackupHint: "כדי לגבות את VeriClass או להעביר למחשב אחר, העתיקו את שלושת אלה.",
+    setBackupHint: "כדי לגבות את REINS Edu או להעביר למחשב אחר, העתיקו את שלושת אלה.",
     setSaved: "נשמר.",
 
     shTitle: "שיתוף עם הסטודנטים",

@@ -1,4 +1,4 @@
-// VeriClass student chat: text with any Hebrew letter lays out right to left;
+// REINS Edu student chat: text with any Hebrew letter lays out right to left;
 // text without (English, code) left to right.
 // (CSS alone can only follow the first letter, and many Hebrew sentences here
 // start with an English term: "Trivy סורק image…".)

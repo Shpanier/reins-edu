@@ -83,7 +83,7 @@ export function SettingsModal({ settings, onChanged, onClose, focus, onNotifyCha
       <section>
         <h3 className="u-mb-8">{t("setAbout")}</h3>
         <dl className="vc-kv">
-          <dt>{t("setVersion")}</dt><dd>VeriClass {settings.version}</dd>
+          <dt>{t("setVersion")}</dt><dd>REINS Edu {settings.version}</dd>
           <dt>{t("setEnv")}</dt><dd className="vc-mono" dir="ltr">{settings.paths.env_file}</dd>
           <dt>{t("setData")}</dt><dd className="vc-mono" dir="ltr">{settings.paths.data_dir}</dd>
           <dt>{t("setDb")}</dt><dd className="vc-mono" dir="ltr">{settings.paths.database}</dd>

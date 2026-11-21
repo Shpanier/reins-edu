@@ -14,9 +14,9 @@ steps:
 
   - expected: hello.py prints the greeting.
     expected_output: |
-      Hello, VeriClass!
+      Hello, REINS Edu!
     expect_output:
-      - match: 'Hello, VeriClass!'
+      - match: 'Hello, REINS Edu!'
         hint: the greeting
     quiz:
       # always: true = asked without your approval in the dashboard.

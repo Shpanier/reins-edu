@@ -1,4 +1,4 @@
-// Counts in the browser tab's title, e.g. "(2 ✍️) (3 🔔) VeriClass", from
+// Counts in the browser tab's title, e.g. "(2 ✍️) (3 🔔) REINS Edu", from
 // several parts of the page at once: each sets its own badge by name.
 
 const badges = new Map<string, string>();

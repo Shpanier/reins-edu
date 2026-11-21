@@ -80,7 +80,7 @@ export function PacingPanel({ exerciseId, quizSlot, live = [], handlers, paramLa
   const heldNow = view ? view.courses.reduce(
     (n, c) => n + c.students.reduce((k, s) => k + s.quiz.filter((a) => a.review === "waiting").length, 0), 0) : 0;
 
-  // "(2 ✍️) VeriClass": answers waiting for the lecturer show in the tab, on any tab of the browser.
+  // "(2 ✍️) REINS Edu": answers waiting for the lecturer show in the tab, on any tab of the browser.
   useEffect(() => {
     setTitleBadge("answers", heldNow > 0 ? `(${heldNow} ✍️)` : null);
     return () => setTitleBadge("answers", null);
