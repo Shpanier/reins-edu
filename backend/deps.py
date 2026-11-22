@@ -20,7 +20,7 @@ from typing import Optional
 
 from fastapi import Depends, Header, HTTPException, Request
 
-from backend import auth, db, packages
+from backend import auth, db, names, packages
 
 
 def _token_from_header(authorization: Optional[str]) -> str:
@@ -98,8 +98,10 @@ def _local_tool_user(request: Request, token: str) -> Optional[dict]:
 def current_user(request: Request, authorization: Optional[str] = Header(None),
                  x_reins_local_token: Optional[str] = Header(None)) -> dict:
     """Any authenticated user. Returns {id, username, role}."""
-    if not authorization and x_reins_local_token:
-        user = _local_tool_user(request, x_reins_local_token.strip())
+    # The local key under either header name: tools set up before the rename send the older one.
+    local_key = x_reins_local_token or names.header(request.headers, "Local-Token")
+    if not authorization and local_key:
+        user = _local_tool_user(request, local_key.strip())
         if user is None:
             raise HTTPException(401, "Invalid local key (only tools on the lecturer's computer may use it)")
         return user

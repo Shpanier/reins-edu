@@ -30,6 +30,9 @@ def test_local_key_is_private_and_works_only_locally(client):
         assert stat.S_IMODE(path.stat().st_mode) == 0o600
     key = path.read_text(encoding="utf-8").strip()
     assert client.get("/api/exercises", headers={"X-Reins-Local-Token": key}).status_code == 200
+    # Tools set up before the rename send the key under the older header name.
+    assert client.get("/api/exercises", headers={"X-VeriClass-Local-Token": key}).status_code == 200
+    assert client.get("/api/exercises", headers={"X-VeriClass-Local-Token": "wrong"}).status_code == 401
     assert client.get("/api/exercises", headers={"X-Reins-Local-Token": "wrong"}).status_code == 401
     # Through a tunnel (forwarding headers) the key is refused.
     r = client.get("/api/exercises", headers={"X-Reins-Local-Token": key, "X-Forwarded-For": "8.8.8.8"})
