@@ -1,44 +1,56 @@
-/* The frame around every page: top bar, navigation, page width; and the
-   screens outside it (sign-in, first run). */
-.vc-app { min-height: 100vh; display: flex; flex-direction: column; }
+/* The frame around every page: the side rail (brand, navigation, the tutor's
+   status, notifications, sharing, language, account) and the page column;
+   and the screens outside it (sign-in, first run). Under 900px the rail
+   becomes a bar across the top. */
+.vc-app { min-height: 100vh; display: flex; align-items: stretch; }
+.vc-app__page { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
-.vc-topbar {
-  position: sticky; top: 0; z-index: 50;
-  background: var(--c-surface); border-bottom: 1px solid var(--c-border);
+.vc-rail {
+  position: sticky; top: 0; z-index: 50; flex: none; width: var(--rail-w); height: 100vh;
+  display: flex; flex-direction: column; gap: 4px; padding: 18px 12px 14px;
+  background: var(--c-rail); color: var(--c-rail-text);
 }
-.vc-topbar__inner {
-  display: flex; align-items: center; gap: 8px 20px; flex-wrap: wrap;
-  max-width: var(--page-max); margin: 0 auto; padding: 0 24px; min-height: 56px;
-}
-.vc-brand { display: inline-flex; align-items: center; gap: 9px; font-size: var(--fs-lg); font-weight: 750; letter-spacing: -0.01em; color: var(--c-text); }
-.vc-brand__mark {
-  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px;
-  background: linear-gradient(135deg, #4f46e5, #3730a3); color: #fff;
-}
-.vc-brand__mark > svg { width: 18px; height: 18px; }
+.vc-rail .vc-brand { color: var(--c-rail-text); padding: 0 8px 16px; }
+.vc-brand { display: inline-flex; align-items: center; gap: 10px; font-size: var(--fs-xl); font-weight: 700; color: var(--c-text); }
+.vc-brand__mark { display: block; width: 28px; height: 28px; flex: none; }
 
-.vc-nav { display: flex; align-items: stretch; gap: 2px; align-self: stretch; }
+.vc-nav { display: flex; flex-direction: column; gap: 2px; }
 .vc-nav__item {
-  display: inline-flex; align-items: center; gap: 7px; padding: 0 12px;
-  border: 0; border-bottom: 2px solid transparent; border-top: 2px solid transparent; background: none;
-  color: var(--c-text-3); font-size: var(--fs-md); font-weight: 600;
+  display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 10px; width: 100%;
+  border: 0; border-radius: var(--radius); background: none; color: var(--c-rail-muted);
+  font-size: var(--fs-md); font-weight: 600; text-align: start;
 }
-.vc-nav__item > svg { width: 16px; height: 16px; }
-.vc-nav__item:hover { color: var(--c-text); }
-.vc-nav__item[aria-current="page"] { color: var(--c-brand); border-bottom-color: var(--c-brand); }
-.vc-topbar__actions { display: flex; align-items: center; gap: 8px; margin-inline-start: auto; flex-wrap: wrap; }
+.vc-nav__item > svg { width: 18px; height: 18px; flex: none; }
+.vc-nav__item:hover { background: var(--c-rail-2); color: var(--c-rail-text); }
+.vc-nav__item[aria-current="page"] { background: var(--c-rail-2); color: #fff; }
+.vc-nav__count {
+  margin-inline-start: auto; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 10px;
+  background: var(--c-attention); color: var(--c-on-attention); font-size: var(--fs-xs); font-weight: 700;
+  line-height: 20px; text-align: center;
+}
 
-/* The "is everything working?" pill in the top bar. */
+.vc-rail__foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 12px; }
+.vc-rail__row { display: flex; align-items: center; gap: 4px; }
+.vc-rail .vc-btn--quiet, .vc-rail .vc-notify-bell__btn { color: var(--c-rail-muted); }
+.vc-rail .vc-btn--quiet:hover:not(:disabled), .vc-rail .vc-notify-bell__btn:hover { background: var(--c-rail-2); color: var(--c-rail-text); }
+.vc-rail .vc-notify-bell__btn[data-unread] { color: var(--c-attention); }
+.vc-rail .vc-notify-bell__count { box-shadow: 0 0 0 2px var(--c-rail); }
+.vc-rail__share { justify-content: center; }
+/* Menus in the rail open upwards (the account) or beside it (the bell). */
+.vc-rail .vc-menu__list { inset-block-start: auto; inset-block-end: calc(100% + 6px); inset-inline-end: auto; inset-inline-start: 0; color: var(--c-text); }
+.vc-rail .vc-notify-panel { inset-block-end: 0; inset-inline-start: calc(100% + 10px); }
+
+/* The "is everything working?" line in the rail. */
 .vc-status {
-  display: inline-flex; align-items: center; gap: 7px; min-height: var(--control-h-sm); padding: 0 10px;
-  border: 1px solid var(--c-border); border-radius: var(--radius-pill); background: var(--c-surface);
-  color: var(--c-text-2); font-size: var(--fs-xs); font-weight: 600;
+  display: flex; align-items: center; gap: 8px; width: 100%; min-height: var(--control-h-sm); padding: 0 10px;
+  border: 1px solid var(--c-rail-border); border-radius: var(--radius); background: none;
+  color: var(--c-rail-text); font-size: var(--fs-sm); font-weight: 600; text-align: start;
 }
-.vc-status:hover { background: var(--c-surface-2); }
-.vc-status--warning { border-color: var(--c-warning-border); background: var(--c-warning-soft); color: var(--c-warning); }
-.vc-status--danger { border-color: var(--c-danger-border); background: var(--c-danger-soft); color: var(--c-danger); }
+.vc-status:hover { background: var(--c-rail-2); }
+.vc-status--warning { border-color: var(--c-attention); color: var(--c-attention); }
+.vc-status--danger { border-color: #f08a80; color: #f5b0a8; }
 
-.vc-main { flex: 1; width: 100%; max-width: var(--page-max); margin: 0 auto; padding: 22px 24px 48px; }
+.vc-main { flex: 1; width: 100%; max-width: var(--page-max); margin: 0 auto; padding: 22px 28px 48px; }
 
 .vc-banner {
   display: flex; align-items: center; justify-content: center; gap: 8px; padding: 7px 16px;
@@ -109,9 +121,22 @@
 .vc-qr { display: grid; place-items: center; padding: 12px; border: 1px solid var(--c-border); border-radius: var(--radius-lg); background: #fff; }
 .vc-qr svg { display: block; width: 200px; height: 200px; }
 
+@media (max-width: 900px) {
+  .vc-app { flex-direction: column; }
+  .vc-rail {
+    width: auto; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px 12px;
+    padding: 8px 14px;
+  }
+  .vc-rail .vc-brand { padding: 0; font-size: var(--fs-lg); }
+  .vc-nav { flex-direction: row; order: 3; width: 100%; overflow-x: auto; }
+  .vc-nav__item { width: auto; white-space: nowrap; }
+  .vc-rail__foot { margin: 0; margin-inline-start: auto; flex-direction: row; align-items: center; padding: 0; }
+  .vc-rail__status { display: none; }
+  .vc-rail .vc-menu__list { inset-block-start: calc(100% + 6px); inset-block-end: auto; inset-inline-start: auto; inset-inline-end: 0; }
+  .vc-rail .vc-notify-panel { inset-block-start: calc(100% + 6px); inset-block-end: auto; inset-inline-start: auto; inset-inline-end: 0; }
+}
+
 @media (max-width: 720px) {
-  .vc-topbar__inner { padding: 8px 14px; }
   .vc-main { padding: 16px 14px 40px; }
-  .vc-nav { order: 3; width: 100%; overflow-x: auto; min-height: 40px; }
   .vc-modal-backdrop { padding: 8px; }
 }

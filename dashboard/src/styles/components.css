@@ -35,7 +35,10 @@
 .vc-btn--danger-soft:hover:not(:disabled) { background: var(--c-danger-soft); border-color: var(--c-danger); }
 
 .vc-btn--brand-soft { background: var(--c-brand-soft); border-color: var(--c-brand-border); color: var(--c-brand); }
-.vc-btn--brand-soft:hover:not(:disabled) { background: #e0e7ff; border-color: var(--c-brand); }
+.vc-btn--brand-soft:hover:not(:disabled) { background: var(--c-brand-soft-hover); border-color: var(--c-brand); }
+
+.vc-btn--attention { background: var(--c-attention); border-color: var(--c-attention); color: var(--c-on-attention); font-weight: 700; }
+.vc-btn--attention:hover:not(:disabled) { background: var(--c-attention-hover); border-color: var(--c-attention-hover); }
 
 .vc-btn--quiet { background: transparent; border-color: transparent; color: var(--c-text-2); }
 .vc-btn--quiet:hover:not(:disabled) { background: var(--c-surface-3); border-color: transparent; color: var(--c-text); }
@@ -146,6 +149,8 @@
 .vc-badge--solid-success { background: var(--c-success); color: #fff; }
 .vc-badge--solid-warning { background: var(--c-warning); color: #fff; }
 .vc-badge--solid-brand { background: var(--c-brand); color: #fff; }
+.vc-badge--attention { background: var(--c-attention); color: var(--c-on-attention); border-color: var(--c-attention); }
+.vc-badge--solid-attention { background: var(--c-attention); color: var(--c-on-attention); }
 .vc-badge--count { min-width: 20px; justify-content: center; padding: 1px 6px; }
 
 .vc-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c-text-3); flex: none; }

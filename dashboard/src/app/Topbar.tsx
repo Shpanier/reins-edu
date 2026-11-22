@@ -72,13 +72,19 @@ function AccountMenu({ settings, plugin, onSettings, onVerify, onSignOut }: {
   );
 }
 
-export function Topbar({ tab, onTab, settings, plugin, bell, onShare, onSettings, onVerify, onSignOut }: {
+/** The side rail: the brand, the three pages (the live class counts what waits
+ *  for the lecturer), and at the bottom the tutor's status, the bell, the
+ *  language, the account and the one action every class starts with: sharing
+ *  the students' link. Under 900px it is a bar across the top (shell.css). */
+export function Rail({ tab, onTab, settings, plugin, bell, waiting, onShare, onSettings, onVerify, onSignOut }: {
   tab: Tab;
   onTab: (t: Tab) => void;
   settings: Settings | null;
   plugin: boolean;
   /** The notifications' bell (app/Notifications.tsx). */
   bell?: React.ReactNode;
+  /** How many things wait for the lecturer in the live class (questions, steps, answers). */
+  waiting: number;
   onShare: () => void;
   onSettings: () => void;
   onVerify: () => void;
@@ -91,25 +97,32 @@ export function Topbar({ tab, onTab, settings, plugin, bell, onShare, onSettings
     { key: "courses", label: t("navCourses"), icon: <Users /> },
   ];
   return (
-    <header className="vc-topbar">
-      <div className="vc-topbar__inner">
-        <Brand />
-        <nav className="vc-nav" aria-label="REINS Edu">
-          {tabs.map(({ key, label, icon }) => (
-            <button key={key} type="button" className="vc-nav__item" aria-current={tab === key ? "page" : undefined}
-                    onClick={() => onTab(key)}>
-              {icon} {label}
-            </button>
-          ))}
-        </nav>
-        <div className="vc-topbar__actions">
+    <aside className="vc-rail">
+      <Brand />
+      <nav className="vc-nav" aria-label="REINS Edu">
+        {tabs.map(({ key, label, icon }) => (
+          <button key={key} type="button" className="vc-nav__item" aria-current={tab === key ? "page" : undefined}
+                  onClick={() => onTab(key)}>
+            {icon} {label}
+            {key === "monitor" && waiting > 0 && (
+              <span className="vc-nav__count" title={t("railWaiting", { n: waiting })}>
+                {waiting > 99 ? "99+" : waiting}
+                <span className="u-sr"> {t("railWaiting", { n: waiting })}</span>
+              </span>
+            )}
+          </button>
+        ))}
+      </nav>
+      <div className="vc-rail__foot">
+        <div className="vc-rail__status"><TutorStatus settings={settings} onClick={onSettings} /></div>
+        <div className="vc-rail__row">
           {bell}
-          <TutorStatus settings={settings} onClick={onSettings} />
-          <Button variant="primary" size="sm" icon={<Share2 />} onClick={onShare}>{t("shareBtn")}</Button>
           <LanguageToggle />
+          <span className="u-push" />
           <AccountMenu settings={settings} plugin={plugin} onSettings={onSettings} onVerify={onVerify} onSignOut={onSignOut} />
         </div>
+        <Button variant="attention" icon={<Share2 />} className="vc-rail__share" onClick={onShare}>{t("shareBtn")}</Button>
       </div>
-    </header>
+    </aside>
   );
 }

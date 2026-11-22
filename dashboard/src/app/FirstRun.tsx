@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, GraduationCap, MonitorSmartphone } from "lucide-react";
+import { Check, MonitorSmartphone } from "lucide-react";
 import { api, auth, createFirstTeacher, type LlmStatus } from "../api";
 import { LanguageToggle, useLang } from "../i18n";
 import { describeError } from "../lib/errors";
@@ -100,10 +100,21 @@ export function FirstRun({ local, onDone }: { local: boolean; onDone: () => void
   );
 }
 
+/** The mark: two reins meeting in the lecturer's hand, on amber (public/favicon.svg is the same drawing). */
+export function BrandMark() {
+  return (
+    <svg className="vc-brand__mark" viewBox="0 0 64 64" aria-hidden="true">
+      <rect width="64" height="64" rx="12" fill="var(--c-attention)" />
+      <path d="M16 46 32 18 48 46" fill="none" stroke="var(--c-rail)" strokeWidth="7" strokeLinecap="round"
+            strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function Brand() {
   return (
     <span className="vc-brand">
-      <span className="vc-brand__mark"><GraduationCap /></span>
+      <BrandMark />
       REINS Edu
     </span>
   );

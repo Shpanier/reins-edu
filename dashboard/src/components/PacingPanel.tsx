@@ -46,10 +46,13 @@ function busiest(courses: PacingCourse[]): PacingCourse {
 /** Class-paced labs (pacing: class): how far the class got, the button that
  *  opens the next step for everyone, and what waits for the lecturer: outputs
  *  that didn't match, quiz answers graded too low, questions to approve. */
-export function PacingPanel({ exerciseId, quizSlot, live = [], handlers, paramLabels }: {
+export function PacingPanel({ exerciseId, quizSlot, stripSlot, live = [], handlers, paramLabels }: {
   exerciseId: string;
   /** Where the questions after steps are drawn: the bottom of the page (App.tsx). Without it, here. */
   quizSlot?: HTMLElement | null;
+  /** Where the class strip is drawn (the top of the page, above the desk): which steps are open,
+   *  how many finished each, and the button that opens the next one. */
+  stripSlot?: HTMLElement | null;
   /** The exercise's students signed in in the last 30 minutes (GET /api/students): their
    *  tutor mode, questions asked and the IDE plugin's signals join their row in the list. */
   live?: Student[];
@@ -208,6 +211,42 @@ export function PacingPanel({ exerciseId, quizSlot, live = [], handlers, paramLa
           openReq={quizOpenReq} />
   );
 
+  // The class at a glance, at the top of the page: the panel below holds everything else.
+  const strip = (
+    <section className="vc-class-strip" aria-label={t("pcStripAria")}>
+      <div className="vc-class-strip__status">
+        <strong>{rel >= total ? t("pacingAllOpen", { n: total }) : rel === 0 ? t("pacingNoneOpen")
+          : rel === 1 ? t("pcStatusOne", { label: label(1) }) : t("pcStatusRange", { range: range(1, rel) })}</strong>
+        <span className="vc-class-strip__sub">
+          {many && <>{courseName(course, t)} · </>}{t("pcStripStarted", { n: started })}
+        </span>
+      </div>
+      <ol className="vc-class-strip__steps" dir="ltr">
+        {view.steps.map((s) => {
+          const open = s.n <= rel;
+          const done = course.done[s.n] ?? 0;
+          const pct = started > 0 ? Math.round((done / started) * 100) : 0;
+          return (
+            <li key={s.n} className="vc-class-strip__step" data-open={open}
+                title={`${s.label} · ${s.title}: ${open ? `${done}/${started}` : t("pcStripLocked")}`}>
+              <span className="vc-class-strip__label">
+                <b>{s.label}</b>
+                <span>{open ? `${done}/${started}` : t("pcStripLocked")}</span>
+              </span>
+              <span className="vc-class-strip__bar" aria-hidden="true"><span style={{ width: `${pct}%` }} /></span>
+            </li>
+          );
+        })}
+      </ol>
+      {rel < total && (
+        <Button variant="primary" icon={<LockOpen />} busy={busy} onClick={() => release(rel + 1)}>
+          {finishedOpen > 0 ? t("pcStripOpen", { label: label(rel + 1), n: finishedOpen })
+            : t("pacingOpenNext", { label: label(rel + 1) })}
+        </Button>
+      )}
+    </section>
+  );
+
   const statusMain = rel >= total ? t("pacingAllOpen", { n: total })
     : rel === 0 ? t("pacingNoneOpen")
     : rel === 1 ? t("pcStatusOne", { label: label(1) })
@@ -364,6 +403,7 @@ export function PacingPanel({ exerciseId, quizSlot, live = [], handlers, paramLa
       {quizSlot && createPortal(
         <section className="vc-card vc-pacing vc-pacing--quiz" aria-label={t("pacingQuiz")}>{quiz}</section>, quizSlot,
       )}
+      {stripSlot && createPortal(strip, stripSlot)}
     </section>
   );
 }

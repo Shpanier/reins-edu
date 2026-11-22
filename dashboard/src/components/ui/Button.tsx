@@ -8,9 +8,11 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
  *  success / warn / danger   filled: approve, careful, destructive
  *  danger-soft outlined red: destructive but not the main action
  *  brand-soft  tinted brand: a secondary action that should still stand out
+ *  attention   amber: the one action of the side rail (sharing the class link)
  *  neutral, ghost: the old names of primary and secondary. */
 export type ButtonVariant =
   | "primary" | "secondary" | "quiet" | "link" | "success" | "warn" | "danger" | "danger-soft" | "brand-soft"
+  | "attention"
   | "neutral" | "ghost";
 
 const VARIANT: Record<ButtonVariant, string> = {
@@ -23,6 +25,7 @@ const VARIANT: Record<ButtonVariant, string> = {
   danger: "vc-btn--danger",
   "danger-soft": "vc-btn--danger-soft",
   "brand-soft": "vc-btn--brand-soft",
+  attention: "vc-btn--attention",
   neutral: "vc-btn--primary",
   ghost: "",
 };

@@ -52,9 +52,9 @@
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
 
-/* ---------- the pop-ups (the corner opposite the page's own messages) ---------- */
+/* ---------- the pop-ups (the top corner: clear of the side rail, the desk's list and the toasts) ---------- */
 .vc-notify-popups {
-  position: fixed; z-index: 150; inset-block-end: 20px; inset-inline-start: 20px;
+  position: fixed; z-index: 150; inset-block-start: 16px; inset-inline-end: 20px;
   display: grid; gap: 8px; width: min(400px, calc(100vw - 32px));
 }
 .vc-notify--popup {
@@ -62,7 +62,7 @@
   border-radius: var(--radius); background: var(--c-surface); box-shadow: var(--shadow-lg);
   animation: vc-notify-in 0.22s ease-out;
 }
-.vc-notify--popup[data-waiting] { border-inline-start-color: var(--c-warning); }
+.vc-notify--popup[data-waiting] { border-inline-start-color: var(--c-attention); }
 @keyframes vc-notify-in { from { opacity: 0; transform: translateY(10px) scale(0.98); } }
 .vc-notify__actions { display: flex; align-items: center; gap: 4px; flex: none; }
 .vc-notify__close {
@@ -76,7 +76,7 @@
   background: var(--c-surface); box-shadow: var(--shadow-lg); font-size: var(--fs-xs); color: var(--c-text-2);
 }
 @media (max-width: 560px) {
-  .vc-notify-popups { inset-inline: 16px; inset-block-end: 16px; width: auto; }
+  .vc-notify-popups { inset-inline: 16px; inset-block-start: auto; inset-block-end: 16px; width: auto; }
   .vc-notify--popup { flex-wrap: wrap; }
   .vc-notify--popup .vc-notify__actions { width: 100%; justify-content: flex-end; }
 }

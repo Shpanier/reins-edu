@@ -4,6 +4,21 @@ The lecturer's dashboard is used live, in front of a class, by people who did
 not build it. Every screen follows the same few rules so that it reads as one
 product and nothing has to be learned twice.
 
+## The look
+
+A graphite side rail (`--c-rail*`), white surfaces on a cool grey page, one
+teal for actions (`--c-brand*`) and one amber for what waits for the lecturer
+(`--c-attention*`: a question, a step to check, an answer to decide). The font
+is Assistant, bundled from `src/fonts/` (Latin and Hebrew, SIL Open Font
+License), so the dashboard never loads a font from another site. The student
+chat (`public/theme.json`, `public/reins-chat.css`) and the project page
+(`site/style.css`) use the same colours and font.
+
+The live class page: the class strip (which steps are open, how many finished
+each, the button that opens the next one), then the desk (`ReviewQueue`: the
+list of what waits on one side, the question chosen in it on the other), then
+the class-pacing panel or the student cards.
+
 ## Rules
 
 1. **No inline colours, sizes or fonts.** Style with the classes in
@@ -41,7 +56,7 @@ All exported from `src/components/ui` (`import { Button, Modal, … } from "./ui
 
 | Component | Use it for |
 |---|---|
-| `Button` | Every button. `variant`: `primary`, `secondary`, `quiet`, `link`, `success`, `warn`, `danger`, `danger-soft`, `brand-soft`. `size`: `sm`, `md`, `lg`. `icon={<Icon />}`, `busy`, `block`, `iconOnly` (+ `aria-label`). |
+| `Button` | Every button. `variant`: `primary`, `secondary`, `quiet`, `link`, `success`, `warn`, `danger`, `danger-soft`, `brand-soft`, `attention` (amber: the rail's "Share with students" only). `size`: `sm`, `md`, `lg`. `icon={<Icon />}`, `busy`, `block`, `iconOnly` (+ `aria-label`). |
 | `Input`, `Select`, `Textarea` | Bare controls (`small`, `inline`, `mono`). |
 | `FormField` | Label + control + hint or error. `Field` is the one-line version for a text input or textarea. |
 | `Check`, `Switch` | A checkbox with its text; an on/off switch. |
@@ -62,7 +77,7 @@ not used as icons.
 Components (`components.css`): `vc-card` (+ `--success` `--warning` `--danger`
 `--info` `--brand` `--muted` `--tight` `--pad-lg` `--flat`), `vc-section`
 (`__head`, `__title`, `__hint`, `__actions`), `vc-badge` (+ `--success`
-`--warning` `--danger` `--info` `--brand`, `--solid-*`, `--count`), `vc-dot`,
+`--warning` `--danger` `--info` `--brand` `--attention`, `--solid-*`, `--count`), `vc-dot`,
 `vc-table` inside `vc-table-wrap`, `vc-pre` (+ `--light`), `vc-quote`, `vc-kv`,
 `vc-grid` (+ `--wide`), `vc-segmented`, `vc-tabs` / `vc-tab`, `vc-divider`.
 
@@ -79,7 +94,7 @@ Something an area needs that isn't here goes in that area's own stylesheet
 ```
 src/
   App.tsx            which screen comes first; the class page
-  app/               the frame: top bar, first run, settings, share, checklist
+  app/               the frame: side rail, first run, settings, share, checklist
   components/        the screens and dialogs
   components/ui/     the building blocks above
   i18n.tsx, i18n/    strings (one file per area)

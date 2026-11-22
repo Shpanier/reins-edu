@@ -1,13 +1,13 @@
 import "../styles/review.css";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import {
-  BookOpen, Inbox, Languages, MapPin, Megaphone, MessageCircleQuestion, MessagesSquare, PenLine, RefreshCw,
+  BookOpen, CircleHelp, Inbox, Languages, ListChecks, MapPin, Megaphone, MessagesSquare, PenLine, RefreshCw,
   RotateCcw, Send, Sparkles, Trash2,
 } from "lucide-react";
 import { api } from "../api";
 import type {
-  AnswerLevel, AnswerSlot, BankMatch, Lang, PendingReview, RegenModel, ReviewAnswer, ReviewChatEntry,
-  ReviewConfig, ReviewStepStatus, SelectResult, TranslateTo,
+  AnswerLevel, AnswerSlot, BankMatch, Lang, NotificationItem, PendingReview, RegenModel, ReviewAnswer,
+  ReviewChatEntry, ReviewConfig, ReviewStepStatus, SelectResult, TranslateTo,
 } from "../types";
 import { useLang, type StringKey } from "../i18n";
 import { describeError } from "../lib/errors";
@@ -154,10 +154,23 @@ interface RowSpec {
   level?: AnswerLevel;
 }
 
-export function ReviewQueue({ exerciseId, onViewChat }: {
+/** The desk: everything that waits for the lecturer in the followed exercise,
+ *  as a list on one side (students' questions, and the steps and quiz answers
+ *  the pacing panel holds), and the question chosen in it on the other, with
+ *  the tutor's drafted answers to send as they are or edited. Review mode (the
+ *  switch in its head) decides whether questions wait here at all. */
+export function ReviewQueue({ exerciseId, onViewChat, others = [], onOpenOther, focus, onCount }: {
   exerciseId: string | null;
   /** Open the student's whole chat (the dashboard's chat view) for a card. */
   onViewChat?: (r: PendingReview) => void;
+  /** The other things that wait in this exercise (a step to check, a quiz answer), from the notifications. */
+  others?: NotificationItem[];
+  /** Open one of `others` where it waits (the pacing panel). */
+  onOpenOther?: (n: NotificationItem) => void;
+  /** A question to show (a notification about it was opened). */
+  focus?: { id: number; at: number } | null;
+  /** How many questions wait, in every exercise (the side rail's count). */
+  onCount?: (n: number) => void;
 }) {
   const { t, lang } = useLang();
   const toast = useToast();
@@ -201,6 +214,14 @@ export function ReviewQueue({ exerciseId, onViewChat }: {
   const handled = useRef(new Set<number>());
   // Goes up after each answer sent: "Answered recently" loads again at once.
   const [answeredTick, setAnsweredTick] = useState(0);
+  // The question shown beside the list (the first one until the lecturer picks another),
+  // and which kinds the list shows.
+  const [selected, setSelected] = useState<number | null>(null);
+  const [show, setShow] = useState<"all" | "questions" | "other">("all");
+  const current = pending.find((r) => r.id === selected) ?? pending[0] ?? null;
+
+  useEffect(() => { if (focus) { setSelected(focus.id); setShow("all"); } }, [focus]);
+  useEffect(() => { onCount?.(allPending.length); }, [allPending.length, onCount]);
 
   const markBusy = (id: number, what: string | null) =>
     setBusy((b) => {
@@ -446,7 +467,7 @@ export function ReviewQueue({ exerciseId, onViewChat }: {
             <span className="vc-review-card__name" dir={textDir(r.username)}>{r.username}</span>
             <span className="u-muted u-sm"><Time value={r.created_at} /></span>
             {r.waiting ? (
-              <span className="vc-badge vc-badge--success"><span className="vc-dot vc-dot--success" /> {t("reviewWaitingNow")}</span>
+              <span className="vc-badge vc-badge--attention">{t("reviewWaitingNow")}</span>
             ) : (
               <span className="vc-badge" title={t("reviewNotWaiting")}>{t("reviewStoppedWaiting")}</span>
             )}
@@ -642,24 +663,69 @@ export function ReviewQueue({ exerciseId, onViewChat }: {
   };
 
   const best = cfg?.best_answer;
+  const questions = enabled ? pending : [];
+  const total = questions.length + others.length;
+  const listQuestions = show === "other" ? [] : questions;
+  const listOthers = show === "questions" ? [] : others;
+  // Review mode off and nothing else waiting: only the head, with its switch.
+  const compact = enabled === false && others.length === 0;
+
+  const questionItem = (r: PendingReview) => {
+    const on = current?.id === r.id;
+    return (
+      <li key={r.id}>
+        <button type="button" className="vc-desk-item" aria-current={on || undefined}
+                data-notify-key={on ? undefined : `question:${r.id}`} onClick={() => setSelected(r.id)}>
+          <span className="vc-desk-item__icon" aria-hidden="true"><CircleHelp /></span>
+          <span className="vc-desk-item__body">
+            <span className="vc-desk-item__top">
+              <span className="vc-desk-item__name" dir={textDir(r.username)}>{r.username}</span>
+              <span className="vc-desk-item__time"><Time value={r.created_at} /></span>
+            </span>
+            <span className="vc-desk-item__where">
+              {r.step ? `${r.step.label} · ${r.step.title}` : t("reviewNoSteps")}
+              {r.waiting && <> · <strong>{t("deskWaiting")}</strong></>}
+            </span>
+            <span className="vc-desk-item__text" dir={textDir(r.question)}>{plain(r.question)}</span>
+          </span>
+        </button>
+      </li>
+    );
+  };
+
+  const otherItem = (n: NotificationItem) => (
+    <li key={n.key}>
+      <button type="button" className="vc-desk-item" data-kind={n.kind} onClick={() => onOpenOther?.(n)}>
+        <span className="vc-desk-item__icon" aria-hidden="true">{n.kind === "step" ? <ListChecks /> : <PenLine />}</span>
+        <span className="vc-desk-item__body">
+          <span className="vc-desk-item__top">
+            <span className="vc-desk-item__name" dir={textDir(n.username)}>{n.username}</span>
+            <span className="vc-desk-item__time"><Time value={n.created_at} /></span>
+          </span>
+          <span className="vc-desk-item__where">
+            {t(n.kind === "step" ? "deskStepToCheck" : "deskAnswerToCheck", { label: n.step_label ?? "" })}
+          </span>
+          {n.text && <span className="vc-desk-item__text" dir={textDir(n.text)}>{n.text}</span>}
+        </span>
+      </button>
+    </li>
+  );
 
   return (
-    <section className="vc-card vc-review" data-on={enabled === true} data-notify-section="question" aria-labelledby={titleId}>
+    <section className="vc-card vc-desk" data-on={enabled === true} data-notify-section="question" aria-labelledby={titleId}>
       <div className="vc-review__head">
         <div className="vc-review__titles">
           <h2 className="vc-review__title" id={titleId}>
-            <MessageCircleQuestion aria-hidden="true" />
-            {t("reviewMode")}
-            {enabled && pending.length > 0 && (
-              <span className="vc-badge vc-badge--solid-brand vc-badge--count">{pending.length}</span>
-            )}
+            <Inbox aria-hidden="true" />
+            {t("deskTitle")}
+            {total > 0 && <span className="vc-badge vc-badge--solid-attention vc-badge--count">{total}</span>}
           </h2>
           {enabled !== null && <p className="vc-review__hint">{enabled ? t("reviewOnHint") : t("reviewOffHint")}</p>}
         </div>
         <div className="vc-review__switch">
           {enabled !== null ? (
             <Switch checked={enabled} disabled={modeSaving} onChange={toggle} label={t("reviewSwitchLabel")}>
-              {enabled ? t("reviewScopeOn") : t("reviewScopeOff")}
+              {t("reviewMode")}
             </Switch>
           ) : loadError ? (
             <>
@@ -672,48 +738,51 @@ export function ReviewQueue({ exerciseId, onViewChat }: {
         </div>
       </div>
 
-      {enabled && (
+      {enabled && cfg && (
+        <details className="vc-desk-settings">
+          <summary>{t("deskOptions")}</summary>
+          <div className="vc-review-options">
+            <label className="vc-review-options__item">
+              <span>{t("reviewTranslateTo")}</span>
+              <Select small inline value={cfg.translate_to}
+                      onChange={(e) => changeConfig({ translate_to: e.target.value as TranslateTo })}>
+                <option value="he">{t("reviewTranslateHe")}</option>
+                <option value="en">{t("reviewTranslateEn")}</option>
+                <option value="off">{t("reviewTranslateOff")}</option>
+              </Select>
+            </label>
+            {best && (best.available ? (
+              <span className="vc-review-options__item">
+                <Check checked={best.enabled} onChange={(v) => changeConfig({ best_answer: v })}>
+                  {t("reviewBest", { m: best.label ?? modelLabel(best.model) })}
+                </Check>
+                <label className="vc-review-options__item">
+                  <span>{t("reviewBestLevel")}</span>
+                  <Select small inline value={best.level} disabled={!best.enabled}
+                          onChange={(e) => changeConfig({ best_level: e.target.value as AnswerLevel })}>
+                    {LEVELS.map((k) => <option key={k} value={k}>{t(k)}</option>)}
+                  </Select>
+                </label>
+              </span>
+            ) : (
+              <span className="u-muted">{t("reviewBestOff", { m: best.label ?? "Opus" })}</span>
+            ))}
+            <Check checked={cfg.save_to_bank} onChange={(v) => changeConfig({ save_to_bank: v })}>
+              {t("reviewSaveDefault")}
+            </Check>
+          </div>
+        </details>
+      )}
+
+      {!compact && (
         <div className="vc-review__body">
-          {loadError && (
+          {enabled && loadError && (
             <Notice tone="warning" action={<Button size="sm" onClick={loadSettings}>{t("retry")}</Button>}>
               {t("reviewSettingsLoadFailed")}
             </Notice>
           )}
-          {cfg && (
-            <div className="vc-review-options">
-              <label className="vc-review-options__item">
-                <span>{t("reviewTranslateTo")}</span>
-                <Select small inline value={cfg.translate_to}
-                        onChange={(e) => changeConfig({ translate_to: e.target.value as TranslateTo })}>
-                  <option value="he">{t("reviewTranslateHe")}</option>
-                  <option value="en">{t("reviewTranslateEn")}</option>
-                  <option value="off">{t("reviewTranslateOff")}</option>
-                </Select>
-              </label>
-              {best && (best.available ? (
-                <span className="vc-review-options__item">
-                  <Check checked={best.enabled} onChange={(v) => changeConfig({ best_answer: v })}>
-                    {t("reviewBest", { m: best.label ?? modelLabel(best.model) })}
-                  </Check>
-                  <label className="vc-review-options__item">
-                    <span>{t("reviewBestLevel")}</span>
-                    <Select small inline value={best.level} disabled={!best.enabled}
-                            onChange={(e) => changeConfig({ best_level: e.target.value as AnswerLevel })}>
-                      {LEVELS.map((k) => <option key={k} value={k}>{t(k)}</option>)}
-                    </Select>
-                  </label>
-                </span>
-              ) : (
-                <span className="u-muted">{t("reviewBestOff", { m: best.label ?? "Opus" })}</span>
-              ))}
-              <Check checked={cfg.save_to_bank} onChange={(v) => changeConfig({ save_to_bank: v })}>
-                {t("reviewSaveDefault")}
-              </Check>
-            </div>
-          )}
-
-          {elsewhere > 0 && <Notice tone="info">{t("otherExercisesWaiting", { n: elsewhere })}</Notice>}
-          {stale > 0 && (
+          {enabled && elsewhere > 0 && <Notice tone="info">{t("otherExercisesWaiting", { n: elsewhere })}</Notice>}
+          {enabled && stale > 0 && (
             <div>
               <Button size="sm" variant="danger-soft" icon={<Trash2 />} busy={staleBusy} onClick={removeStale}>
                 {t("reviewDeleteStale", { n: stale })}
@@ -721,28 +790,58 @@ export function ReviewQueue({ exerciseId, onViewChat }: {
             </div>
           )}
 
-          {!loaded ? (
-            <Loading />
-          ) : pending.length === 0 ? (
-            <EmptyState icon={<Inbox />} title={t("noQuestions")}>{t("reviewEmptyText")}</EmptyState>
-          ) : (
-            <>
-              <details className="vc-review-legend">
-                <summary>{t("reviewLegendTitle")}</summary>
-                <ul className="vc-review-legend__list">
-                  {LEVELS.map((k) => (
-                    <li key={k}>
-                      <Pips level={k} />
-                      <span className="vc-review-legend__name">{t(k)}</span>
-                      <span>{t(LEVEL_HELP[k])}</span>
-                    </li>
-                  ))}
+          <div className="vc-desk__body">
+            <nav className="vc-desk__inbox" aria-label={t("deskListAria")}>
+              {questions.length > 0 && others.length > 0 && (
+                <div className="vc-segmented vc-desk__filter" role="group" aria-label={t("deskShow")}>
+                  <button type="button" aria-pressed={show === "all"} onClick={() => setShow("all")}>
+                    {t("deskAll", { n: total })}
+                  </button>
+                  <button type="button" aria-pressed={show === "questions"} onClick={() => setShow("questions")}>
+                    {t("deskQuestions", { n: questions.length })}
+                  </button>
+                  <button type="button" aria-pressed={show === "other"} onClick={() => setShow("other")}>
+                    {t("deskOther", { n: others.length })}
+                  </button>
+                </div>
+              )}
+              {enabled && !loaded ? <Loading /> : total === 0 ? (
+                <p className="vc-desk__empty">{t("deskEmpty")}</p>
+              ) : (
+                <ul className="vc-desk__list">
+                  {listQuestions.map(questionItem)}
+                  {listOthers.map(otherItem)}
                 </ul>
-              </details>
-              {pending.map(card)}
-            </>
-          )}
-          <AnsweredRecently exerciseId={exerciseId} refresh={answeredTick} plain={plain} />
+              )}
+            </nav>
+
+            <div className="vc-desk__detail">
+              {enabled === false ? (
+                <EmptyState icon={<Inbox />} title={t("deskReviewOff")}>{t("deskReviewOffText")}</EmptyState>
+              ) : !loaded ? (
+                <Loading />
+              ) : current ? (
+                <>
+                  {card(current)}
+                  <details className="vc-review-legend">
+                    <summary>{t("reviewLegendTitle")}</summary>
+                    <ul className="vc-review-legend__list">
+                      {LEVELS.map((k) => (
+                        <li key={k}>
+                          <Pips level={k} />
+                          <span className="vc-review-legend__name">{t(k)}</span>
+                          <span>{t(LEVEL_HELP[k])}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                </>
+              ) : (
+                <EmptyState icon={<Inbox />} title={t("noQuestions")}>{t("reviewEmptyText")}</EmptyState>
+              )}
+            </div>
+          </div>
+          {enabled && <AnsweredRecently exerciseId={exerciseId} refresh={answeredTick} plain={plain} />}
         </div>
       )}
     </section>

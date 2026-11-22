@@ -26,7 +26,7 @@ import { FirstRun, Splash } from "./app/FirstRun";
 import { markShared, Onboarding } from "./app/Onboarding";
 import { SettingsModal } from "./app/SettingsModal";
 import { ShareModal } from "./app/ShareModal";
-import { ConnectionBanner, Topbar, type Tab } from "./app/Topbar";
+import { ConnectionBanner, Rail, type Tab } from "./app/Topbar";
 import { useNotifications } from "./app/useNotifications";
 import { NotificationBell, NotificationPopups } from "./app/Notifications";
 import { exerciseTitle } from "./lib/exerciseOrder";
@@ -99,6 +99,8 @@ function Dashboard({ onSignOut }: { onSignOut: () => void }) {
   const [verifying, setVerifying] = useState(false);
   // The bottom of the class page: the pacing panel draws its questions after steps there.
   const [quizSlot, setQuizSlot] = useState<HTMLDivElement | null>(null);
+  // The top of the class page: the pacing panel draws its class strip there, above the desk.
+  const [stripSlot, setStripSlot] = useState<HTMLDivElement | null>(null);
 
   const plugin = settings?.plugin_ui ?? false;
   const features = useMemo(() => ({ plugin }), [plugin]);
@@ -256,6 +258,15 @@ function Dashboard({ onSignOut }: { onSignOut: () => void }) {
   // queue, the steps to check, the answers to decide), on its exercise's page;
   // anything else, or something already handled, opens the student's chat.
   const [focus, setFocus] = useState<{ n: NotificationItem; at: number } | null>(null);
+  // A question opened from a notification: the desk shows it.
+  const [focusQuestion, setFocusQuestion] = useState<{ id: number; at: number } | null>(null);
+  // Questions waiting in every exercise (the desk counts them), for the rail.
+  const [questionCount, setQuestionCount] = useState(0);
+  const onQuestionCount = useCallback((n: number) => setQuestionCount(n), []);
+  // The other things that wait for the lecturer (a step to check, a quiz answer): the desk lists
+  // this exercise's; the rail counts them all.
+  const waitingOthers = notify.items.filter((n) => n.kind !== "question" && notify.isWaiting(n));
+  const deskOthers = waitingOthers.filter((n) => n.exercise_id === liveId);
   const openNotification = (n: NotificationItem) => {
     const who: Student = {
       session_id: n.session_id, username: n.username, exercise: n.exercise_id, variant: "", mode: "mentor",
@@ -266,6 +277,7 @@ function Dashboard({ onSignOut }: { onSignOut: () => void }) {
     if (!notify.isWaiting(n)) { handlers.onViewChat(who); return; }
     setTab("monitor");
     if (liveId !== n.exercise_id) { setLiveExercise(null); setLiveId(n.exercise_id); }
+    if (n.kind === "question") setFocusQuestion({ id: n.id, at: Date.now() });
     setFocus({ n, at: Date.now() });
   };
 
@@ -301,14 +313,16 @@ function Dashboard({ onSignOut }: { onSignOut: () => void }) {
   return (
     <FeaturesProvider value={features}>
       <div className="vc-app">
-        <ConnectionBanner />
-        <Topbar
+        <Rail
           tab={tab} onTab={setTab} settings={settings} plugin={plugin}
           bell={<NotificationBell feed={notify} exerciseTitle={titleOf} onOpen={openNotification}
                                   onSettings={() => setShowSettings("notifications")} />}
+          waiting={questionCount + waitingOthers.length}
           onShare={() => setShowShare(true)} onSettings={() => setShowSettings(true)}
           onVerify={() => setVerifying(true)} onSignOut={onSignOut}
         />
+        <div className="vc-app__page">
+        <ConnectionBanner />
         <main className="vc-main">
           {/* The class page stays mounted while another tab is open, so a
               half-written answer or note isn't lost by looking something up. */}
@@ -330,14 +344,17 @@ function Dashboard({ onSignOut }: { onSignOut: () => void }) {
                 exercise={liveExercise}
                 studentCount={visible.length}
               />
+              <div ref={setStripSlot} />
               {plugin && <ProctorBanner students={visible} onInspect={setProctorSessionId} />}
+              {/* The desk first: what waits for the lecturer, and the question chosen in it. */}
+              <ReviewQueue exerciseId={liveId} onViewChat={viewReviewChat} others={deskOthers}
+                           onOpenOther={openNotification} focus={focusQuestion} onCount={onQuestionCount} />
               {/* A class-paced lab lists its students once, in the pacing panel, with
                   everything the student cards show; other labs have the cards. */}
               {classPaced && liveId
-                ? <PacingPanel exerciseId={liveId} quizSlot={quizSlot} live={visible} handlers={handlers}
-                               paramLabels={liveExercise?.param_labels} />
+                ? <PacingPanel exerciseId={liveId} quizSlot={quizSlot} stripSlot={stripSlot} live={visible}
+                               handlers={handlers} paramLabels={liveExercise?.param_labels} />
                 : <StepChecks exerciseId={liveId} />}
-              <ReviewQueue exerciseId={liveId} onViewChat={viewReviewChat} />
               {!classPaced && (
                 <StudentGrid
                   students={visible}
@@ -355,6 +372,7 @@ function Dashboard({ onSignOut }: { onSignOut: () => void }) {
           )}
           {tab === "courses" && <ErrorBoundary {...boundary}><CoursesPanel /></ErrorBoundary>}
         </main>
+        </div>
 
         {askingTarget && (
           <AskThemModal
