@@ -6,7 +6,7 @@
 
 <img src="site/img/banner.svg" width="100%" alt="REINS Edu: Reviewed Explanations, Instructor-Navigated Steps">
 
-**REINS** הוא ראשי תיבות של <span dir="ltr">**R**eviewed **E**xplanations, **I**nstructor-**N**avigated **S**teps</span>: הסברים שנבדקו, שלבים בניווט המרצה. המושכות נשארות בידי המרצה.
+**REINS** הוא ראשי תיבות של <span dir="ltr">**R**eviewed **E**xplanations, **I**nstructor-**N**avigated **S**teps</span>. המושכות נשארות בידי המרצה.
 
 **עוזר בינה מלאכותית למעבדות תכנות, בשליטת המרצה.** הסטודנטים עובדים על המעבדה
 בצ'אט בדפדפן עם עוזר שמכוון ולא נותן את התשובה. המרצה רואה כל שיחה בזמן אמת,

@@ -173,7 +173,7 @@ export const shellStrings = defineStrings(
     navCourses: "קורסים וסטודנטים",
     shareBtn: "שיתוף עם הסטודנטים",
     railWaiting: "{n:דבר אחד מחכה|# דברים מחכים} לך",
-    acronymLine: "הסברים שנבדקו, שלבים בניווט המרצה: המושכות נשארות בידי המרצה.",
+    acronymLine: "המושכות נשארות בידי המרצה.",
     statusReady: "העוזר מוכן",
     statusNoKey: "חסר מפתח API",
     statusError: "תקלה בעוזר",
