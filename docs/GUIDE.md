@@ -87,9 +87,18 @@ This is the assessment backbone: probes test whether the student
 *understands* what the AI helped them produce.
 
 ### 3. Review mode: every answer goes through you
-The switch at the top of the review queue on *Live class*, for all exercises. When on:
+The switch at the top of *Waiting for you* on *Live class*, for all exercises.
 
-1. Student asks a question. It is in the instructor's review queue at once;
+*Waiting for you* (the desk) is the middle of the *Live class* page, under the
+class strip (which steps are open, how many finished each, and the button that
+opens the next one). On its left, a list of everything that waits for you in
+the followed exercise: students' questions, steps to check and quiz answers to
+decide. On its right, the question chosen in the list, with the answers to
+send. A step or a quiz answer in the list opens where it is decided, under
+*Class pacing*. The side rail counts what waits, in every exercise, next to
+*Live class*. When review mode is on:
+
+1. Student asks a question. It is in the desk's list at once;
    the student sees *"Your teacher is reviewing your question…"*. The card
    says **where the student is**: the step (its label and title) and its
    status (working on it; finished it and waiting for the instructor to open
@@ -198,13 +207,13 @@ student rather than repeating boilerplate.
 
 When a student sends you something, a notification pops up inside the dashboard
 (not a browser or system notification), on whatever tab or exercise you are
-looking at, with a short chime. The bell in the top bar counts the new ones and
+looking at, with a short chime. The bell in the side rail counts the new ones and
 lists the last 12 hours; opening it marks them seen, and the browser tab's title
 shows the count too ("(3 🔔) REINS Edu").
 
 | Kind | When | Open takes you to |
 |---|---|---|
-| Question | a question waits in the review queue (review mode) | the question in *Checking the tutor's answers*, on its exercise |
+| Question | a question waits on the desk (review mode) | the question on the desk (*Waiting for you*), on its exercise |
 | Step | a step answer or a pasted output waits for your check | the step to check, on its exercise |
 | Quiz answer | an answer to a question after a step waits for your decision | the answer under *Class pacing* |
 | Reply | a student answered your own question (*Ask them*) | the student's chat |

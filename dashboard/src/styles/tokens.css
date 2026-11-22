@@ -1,64 +1,113 @@
 /* Design tokens: every colour, size and shadow the dashboard uses.
-   Components read these; nothing else in the code names a hex colour. */
+   Components read these; nothing else in the code names a hex colour.
+
+   The look ("desk"): a graphite side rail, white work surfaces on a cool grey
+   page, one teal for actions and one amber for what waits for the lecturer.
+   The font is Assistant (Latin and Hebrew, SIL Open Font License, the files
+   and licence in ../fonts), served with the dashboard: nothing is fetched
+   from another site. */
+@font-face {
+  font-family: "Assistant";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url("../fonts/assistant-hebrew-wght-normal.woff2") format("woff2");
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+@font-face {
+  font-family: "Assistant";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url("../fonts/assistant-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Assistant";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url("../fonts/assistant-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
-  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-    "Noto Sans Hebrew", "Arial Hebrew", sans-serif;
+  --font: "Assistant", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, "Noto Sans Hebrew",
+    "Arial Hebrew", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 
   /* surfaces and text */
-  --c-bg: #f5f6f8;
+  --c-bg: #eef1f3;
   --c-surface: #ffffff;
-  --c-surface-2: #f8f9fb;
-  --c-surface-3: #eef0f3;
-  --c-border: #e2e5ea;
-  --c-border-strong: #c9ced6;
-  --c-text: #161a20;
-  --c-text-2: #454d5a;
-  --c-text-3: #667085;
+  --c-surface-2: #f6f8f9;
+  --c-surface-3: #e9edf0;
+  --c-border: #d9dee3;
+  --c-border-strong: #c3cad1;
+  --c-text: #1b1f23;
+  --c-text-2: #3d444b;
+  --c-text-3: #59616a;
 
-  /* brand */
-  --c-brand: #4338ca;
-  --c-brand-hover: #3730a3;
-  --c-brand-soft: #eef2ff;
-  --c-brand-border: #c7d2fe;
+  /* brand: the actions */
+  --c-brand: #0b6a88;
+  --c-brand-hover: #08546c;
+  --c-brand-soft: #e4f1f5;
+  --c-brand-soft-hover: #d3e8ef;
+  --c-brand-border: #a9d2df;
   --c-on-brand: #ffffff;
+
+  /* attention: what waits for the lecturer (a question, a step, an answer) */
+  --c-attention: #f2b705;
+  --c-attention-hover: #dba503;
+  --c-attention-soft: #fdf1c4;
+  --c-attention-ink: #4d4400;
+  --c-on-attention: #1b1f23;
+
+  /* the side rail */
+  --c-rail: #1d2227;
+  --c-rail-2: #2f363d;
+  --c-rail-border: #3a424a;
+  --c-rail-text: #eef0f2;
+  --c-rail-muted: #a7afb8;
 
   /* meaning */
   --c-success: #157f3d;
   --c-success-hover: #116432;
   --c-success-soft: #effaf3;
   --c-success-border: #b9e6c9;
-  --c-warning: #a35208;
-  --c-warning-hover: #86430a;
-  --c-warning-soft: #fff8eb;
-  --c-warning-border: #f7d9a4;
+  --c-warning: #8f4f05;
+  --c-warning-hover: #743f04;
+  --c-warning-soft: #fff6e0;
+  --c-warning-border: #f1d395;
   --c-danger: #b42318;
   --c-danger-hover: #912018;
   --c-danger-soft: #fef3f2;
   --c-danger-border: #f9cdc8;
-  --c-info: #175cd3;
-  --c-info-soft: #eff6ff;
-  --c-info-border: #bfd8fb;
+  --c-info: #0b6a88;
+  --c-info-soft: #e4f1f5;
+  --c-info-border: #a9d2df;
 
   /* shape */
-  --radius-sm: 6px;
-  --radius: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
   --radius-pill: 999px;
-  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
-  --shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
-  --shadow-lg: 0 20px 40px -8px rgba(16, 24, 40, 0.22), 0 4px 10px rgba(16, 24, 40, 0.08);
-  --ring: 0 0 0 3px rgba(67, 56, 202, 0.28);
+  --shadow-sm: 0 1px 1px rgba(20, 24, 28, 0.04);
+  --shadow: 0 1px 2px rgba(20, 24, 28, 0.06);
+  --shadow-lg: 0 16px 36px -8px rgba(20, 24, 28, 0.24), 0 3px 8px rgba(20, 24, 28, 0.08);
+  --ring: 0 0 0 3px rgba(11, 106, 136, 0.3);
 
-  /* type scale */
-  --fs-xs: 12px;
-  --fs-sm: 13px;
-  --fs-md: 14px;
-  --fs-lg: 16px;
-  --fs-xl: 20px;
-  --fs-2xl: 26px;
+  /* type scale (Assistant runs small: one step up from a system font) */
+  --fs-xs: 13px;
+  --fs-sm: 14px;
+  --fs-md: 15px;
+  --fs-lg: 17px;
+  --fs-xl: 21px;
+  --fs-2xl: 27px;
 
   --control-h: 36px;
   --control-h-sm: 30px;
-  --page-max: 1280px;
+  --rail-w: 224px;
+  --page-max: 1360px;
 }

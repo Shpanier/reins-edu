@@ -2,6 +2,29 @@
    paragraph, list, heading and table with Hebrew in it, dir="ltr" on the rest.
    Code always stays left to right. Chainlit 2.x renders a Markdown paragraph as
    <div role="article">. */
+
+/* The font of the whole product: Assistant (Latin and Hebrew, SIL Open Font
+   License, fonts/OFL.txt), served from here. theme.json names it in --font-sans
+   and holds the colours (the lecturer's dashboard uses the same ones). */
+@font-face {
+  font-family: "Assistant"; font-style: normal; font-display: swap; font-weight: 200 800;
+  src: url("fonts/assistant-hebrew-wght-normal.woff2") format("woff2");
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+@font-face {
+  font-family: "Assistant"; font-style: normal; font-display: swap; font-weight: 200 800;
+  src: url("fonts/assistant-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Assistant"; font-style: normal; font-display: swap; font-weight: 200 800;
+  src: url("fonts/assistant-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Assistant runs small: a little larger than Chainlit's default. */
+body { font-size: 17px; }
 .message-content [dir] {
   text-align: start;
 }
@@ -40,3 +63,15 @@ input[dir="rtl"]::placeholder, textarea[dir="rtl"]::placeholder { text-align: ri
 /* A step's "Done" button and the answer choices are the main thing to click:
    give them room and a clear edge in both themes. */
 .message-content + div button, .step button[id^="action"] { font-weight: 600; }
+
+/* The look shared with the lecturer's dashboard: a graphite bar on top, and the
+   student's own messages in the action colour (Chainlit 2.x draws them in a
+   rounded bg-accent bubble; the tutor's messages have no bubble). */
+#header { background: #1d2227; color: #eef0f2; }
+#header button { color: #eef0f2; }
+#header button:hover { background: #2f363d; color: #ffffff; }
+div.bg-accent.rounded-3xl:has(.message-content) {
+  background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border-radius: 12px;
+}
+div.bg-accent.rounded-3xl:has(.message-content) .prose { color: inherit; }
+div.bg-accent.rounded-3xl:has(.message-content) .prose :not(pre) > code { background: rgba(255, 255, 255, 0.18); color: inherit; }

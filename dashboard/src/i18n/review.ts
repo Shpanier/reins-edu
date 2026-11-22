@@ -175,6 +175,21 @@ export const reviewStrings = defineStrings(
     chatProbeEdited: "The tutor's suggestion, edited",
     answerGrade: "Student's answer · grade {g}/2",
     overridden: "(changed by you)",
+
+    // ---- the desk: everything that waits for the lecturer, and the question chosen in it
+    deskTitle: "Waiting for you",
+    deskListAria: "What waits for you",
+    deskShow: "Show",
+    deskAll: "All {n}",
+    deskQuestions: "Questions {n}",
+    deskOther: "Steps and answers {n}",
+    deskEmpty: "Nothing waits for you right now.",
+    deskWaiting: "waiting",
+    deskStepToCheck: "Step {label} waits for your check",
+    deskAnswerToCheck: "An answer after step {label} waits for your decision",
+    deskOptions: "Review settings",
+    deskReviewOff: "Review mode is off",
+    deskReviewOffText: "Students get the tutor's answers directly. Turn review mode on to see each question here first, with the tutor's drafted answers.",
   },
   {
     // ---- the review queue: header and switch
@@ -345,5 +360,20 @@ export const reviewStrings = defineStrings(
     chatProbeEdited: "הצעה של העוזר, ערוכה",
     answerGrade: "תשובת הסטודנט · ציון {g}/2",
     overridden: "(שונה על ידך)",
+
+    // ---- the desk: everything that waits for the lecturer, and the question chosen in it
+    deskTitle: "מחכה לך",
+    deskListAria: "מה מחכה לך",
+    deskShow: "הצגה",
+    deskAll: "הכול {n}",
+    deskQuestions: "שאלות {n}",
+    deskOther: "שלבים ותשובות {n}",
+    deskEmpty: "כרגע שום דבר לא מחכה לך.",
+    deskWaiting: "מחכה",
+    deskStepToCheck: "שלב {label} מחכה לבדיקה שלך",
+    deskAnswerToCheck: "תשובה אחרי שלב {label} מחכה להחלטה שלך",
+    deskOptions: "הגדרות הבדיקה",
+    deskReviewOff: "מצב בדיקה כבוי",
+    deskReviewOffText: "הסטודנטים מקבלים את תשובות העוזר ישירות. הפעלת מצב בדיקה מציגה כאן כל שאלה קודם, עם התשובות שהעוזר ניסח.",
   },
 );

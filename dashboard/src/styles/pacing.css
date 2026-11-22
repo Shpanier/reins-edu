@@ -187,3 +187,20 @@
 .vc-pacing--quiz > .vc-pacing-block { scroll-margin-top: 72px; }
 .vc-badge--button { border: 0; font: inherit; cursor: pointer; }
 .vc-badge--button:hover { filter: brightness(0.96); }
+
+/* ---------- the class strip: the top of the live page, above the desk ---------- */
+.vc-class-strip {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; margin-bottom: 16px; padding: 12px 18px;
+  border: 1px solid var(--c-border); border-radius: var(--radius-lg); background: var(--c-surface);
+}
+.vc-class-strip__status { display: grid; min-width: 170px; }
+.vc-class-strip__status > strong { font-size: var(--fs-lg); }
+.vc-class-strip__sub { color: var(--c-text-3); font-size: var(--fs-sm); }
+.vc-class-strip__steps { flex: 1 1 320px; min-width: 0; display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; overflow-x: auto; }
+.vc-class-strip__step { flex: 1 0 52px; display: grid; gap: 4px; max-width: 150px; }
+.vc-class-strip__label { display: flex; justify-content: space-between; gap: 6px; font-size: var(--fs-sm); white-space: nowrap; }
+.vc-class-strip__label > span { color: var(--c-text-3); }
+.vc-class-strip__bar { display: block; height: 6px; border-radius: 3px; background: var(--c-border); overflow: hidden; }
+.vc-class-strip__bar > span { display: block; height: 100%; background: var(--c-text); }
+.vc-class-strip__step[data-open="false"] .vc-class-strip__bar { background: none; border: 1px dashed var(--c-border-strong); }
+.vc-class-strip__step[data-open="false"] .vc-class-strip__bar > span { display: none; }
