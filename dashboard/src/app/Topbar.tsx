@@ -4,7 +4,7 @@ import type { Settings } from "../api";
 import { LanguageToggle, useLang } from "../i18n";
 import { connection } from "../lib/connection";
 import { Button } from "../components/ui";
-import { Brand } from "./FirstRun";
+import { Acronym, Brand } from "./FirstRun";
 import { textDir } from "../lib/textDir";
 
 export type Tab = "monitor" | "exercises" | "courses";
@@ -98,7 +98,10 @@ export function Rail({ tab, onTab, settings, plugin, bell, waiting, onShare, onS
   ];
   return (
     <aside className="vc-rail">
-      <Brand />
+      <div className="vc-rail__brand">
+        <Brand />
+        <Acronym />
+      </div>
       <nav className="vc-nav" aria-label="REINS Edu">
         {tabs.map(({ key, label, icon }) => (
           <button key={key} type="button" className="vc-nav__item" aria-current={tab === key ? "page" : undefined}

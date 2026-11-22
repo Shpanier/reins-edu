@@ -30,6 +30,7 @@ export function FirstRun({ local, onDone }: { local: boolean; onDone: () => void
       <div className="vc-auth">
         <div className="vc-auth__card">
           <div className="vc-auth__top"><Brand /><LanguageToggle /></div>
+          <Acronym line />
           <Notice tone="info" title={t("frRemoteTitle")}>{t("frRemoteBody")}</Notice>
         </div>
       </div>
@@ -59,6 +60,7 @@ export function FirstRun({ local, onDone }: { local: boolean; onDone: () => void
     <div className="vc-auth">
       <div className="vc-auth__card vc-auth__card--wide">
         <div className="vc-auth__top"><Brand /><LanguageToggle /></div>
+        <Acronym line />
         <div className="vc-steps" aria-hidden="true">
           <span className="vc-steps__dot" data-state={step === 1 ? "now" : "done"}>{step === 1 ? "1" : <Check />}</span>
           <span>{t("frStepAccount")}</span>
@@ -120,6 +122,21 @@ export function Brand() {
   );
 }
 
+/** What REINS stands for, the initials marked. The words stay English in both
+ *  languages (they make the name); `line` adds a translated sentence under them. */
+export function Acronym({ line = false }: { line?: boolean }) {
+  const { t } = useLang();
+  return (
+    <p className="vc-acronym">
+      <span className="vc-acronym__words" lang="en" dir="ltr">
+        <span className="vc-acronym__part"><b>R</b>eviewed <b>E</b>xplanations,</span>{" "}
+        <span className="vc-acronym__part"><b>I</b>nstructor-<b>N</b>avigated <b>S</b>teps</span>
+      </span>
+      {line && <span className="vc-acronym__line">{t("acronymLine")}</span>}
+    </p>
+  );
+}
+
 /** Shown while the first request decides which screen comes next. */
 export function Splash({ error, onRetry }: { error?: string | null; onRetry?: () => void }) {
   const { t } = useLang();
@@ -127,6 +144,7 @@ export function Splash({ error, onRetry }: { error?: string | null; onRetry?: ()
     <div className="vc-auth">
       <div className="vc-auth__card">
         <div className="vc-auth__top"><Brand /></div>
+        <Acronym line />
         {error ? (
           <Notice tone="danger" action={onRetry && <Button size="sm" onClick={onRetry}>{t("retry")}</Button>}>
             {error}

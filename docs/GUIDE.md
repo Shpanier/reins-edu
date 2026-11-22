@@ -1,6 +1,6 @@
 # Lecturer's guide
 
-How REINS Edu works in class, and the settings behind each part. To install
+How REINS Edu (**R**eviewed **E**xplanations, **I**nstructor-**N**avigated **S**teps) works in class, and the settings behind each part. To install
 and start, see the [README](../README.md); to write exercises, see
 [examples/README.md](../examples/README.md).
 

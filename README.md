@@ -2,7 +2,9 @@
 
 > English · [עברית](README.he.md)
 
-*Reviewed Explanations, Instructor-Navigated Steps: the lecturer holds the reins.*
+<img src="site/img/banner.svg" width="100%" alt="REINS Edu: Reviewed Explanations, Instructor-Navigated Steps">
+
+**REINS** stands for **R**eviewed **E**xplanations, **I**nstructor-**N**avigated **S**teps: the lecturer holds the reins.
 
 **An AI tutor for programming labs that the lecturer controls.** Students work
 through a lab in a web chat with an AI tutor that guides rather than hands out

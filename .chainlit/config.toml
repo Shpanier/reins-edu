@@ -31,7 +31,7 @@ favorites = false
 
 [UI]
 name = "REINS Edu"
-description = "Your lab's tutor and steps"
+description = "REINS Edu (Reviewed Explanations, Instructor-Navigated Steps): your lab's tutor and steps"
 default_theme = "light"
 default_sidebar_state = "hidden"
 confirm_new_chat = true

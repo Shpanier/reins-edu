@@ -32,7 +32,21 @@
     const dir = HE.test(el.value || el.placeholder || "") ? "rtl" : "ltr";
     if (el.dir !== dir) el.dir = dir;
   };
+  // The sign-in page: what REINS stands for, under the heading (on a phone the
+  // picture beside the form, which says it too, is hidden).
+  const addAcronym = () => {
+    if (!/\/login\/?$/.test(location.pathname)) return;
+    const h = document.querySelector("form h1");
+    if (!h || h.parentElement.querySelector(".reins-acronym")) return;
+    const p = document.createElement("p");
+    p.className = "reins-acronym";
+    p.lang = "en";
+    p.dir = "ltr";
+    p.innerHTML = "<b>R</b>eviewed <b>E</b>xplanations, <b>I</b>nstructor-<b>N</b>avigated <b>S</b>teps";
+    h.parentElement.appendChild(p);
+  };
   const scan = () => {
+    addAcronym();
     document.querySelectorAll(IN_MESSAGES).forEach(mark);
     document.querySelectorAll(LABELS).forEach(markLabel);
     document.querySelectorAll("input, textarea").forEach(markField);
