@@ -83,6 +83,10 @@ a:hover { color: var(--brand-strong); }
 
 /* --- hero --- */
 .hero { padding-block: 60px 28px; text-align: center; }
+/* The name, big, at the top of the page; under it what REINS stands for. */
+.wordmark { display: flex; align-items: center; justify-content: center; gap: .22em; margin: 0 0 22px;
+            font-size: clamp(48px, 8vw, 88px); font-weight: 800; line-height: 1; letter-spacing: -0.01em; }
+.wordmark img { width: .9em; height: .9em; }
 /* What REINS stands for: a dark band above the headline, the initials in amber. */
 .acronym { display: inline-block; margin: 0 0 22px; padding: 8px 18px; border-radius: 6px; background: var(--bar);
            color: var(--bar-text); font-size: clamp(17px, 2.1vw, 22px); font-weight: 600; line-height: 1.45; }
