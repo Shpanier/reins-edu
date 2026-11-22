@@ -3,7 +3,7 @@ import { login, auth } from "../api";
 import { LanguageToggle, useLang } from "../i18n";
 import { describeError } from "../lib/errors";
 import { Button, Field, Notice } from "./ui";
-import { Brand } from "../app/FirstRun";
+import { Acronym, Brand } from "../app/FirstRun";
 
 interface Props {
   onLoggedIn: () => void;
@@ -69,6 +69,7 @@ export function LoginGate({ onLoggedIn }: Props) {
     <div className="vc-auth">
       <form className="vc-auth__card" onSubmit={submit}>
         <div className="vc-auth__top"><Brand /><LanguageToggle /></div>
+        <Acronym line />
         <h1 className="vc-auth__title">{t("loginTitle")}</h1>
         <p className="vc-auth__lead">{t("loginLead")}</p>
         <Field label={t("loginUser")} value={code} onChange={setCode} autoFocus autoComplete="username" />

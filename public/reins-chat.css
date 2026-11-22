@@ -75,3 +75,7 @@ div.bg-accent.rounded-3xl:has(.message-content) {
 }
 div.bg-accent.rounded-3xl:has(.message-content) .prose { color: inherit; }
 div.bg-accent.rounded-3xl:has(.message-content) .prose :not(pre) > code { background: rgba(255, 255, 255, 0.18); color: inherit; }
+
+/* What REINS stands for, under the sign-in heading (added by reins-chat.js). */
+.reins-acronym { margin: 0; font-size: 15px; line-height: 1.4; color: hsl(var(--muted-foreground)); }
+.reins-acronym b { font-weight: 800; color: hsl(var(--primary)); }

@@ -32,7 +32,9 @@ export function relativeTime(d: Date, lang: Lang, now: Date = new Date()): strin
   const sec = Math.round((now.getTime() - d.getTime()) / 1000);
   if (sec < 45) return lang === "he" ? "עכשיו" : "just now";
   const rtf = new Intl.RelativeTimeFormat(locale(lang), { numeric: "always", style: "short" });
-  if (sec < 3600) return rtf.format(-Math.round(sec / 60), "minute");
-  if (sec < 86_400) return rtf.format(-Math.round(sec / 3600), "hour");
+  const min = Math.round(sec / 60), hours = Math.round(sec / 3600);
+  // Chrome writes one minute or hour in Hebrew as "לפני דק׳ (1)".
+  if (sec < 3600) return lang === "he" && min === 1 ? "לפני דקה" : rtf.format(-min, "minute");
+  if (sec < 86_400) return lang === "he" && hours === 1 ? "לפני שעה" : rtf.format(-hours, "hour");
   return formatDateTime(d, lang);
 }

@@ -83,7 +83,13 @@ a:hover { color: var(--brand-strong); }
 
 /* --- hero --- */
 .hero { padding-block: 60px 28px; text-align: center; }
-.eyebrow { margin: 0 0 14px; color: var(--brand); font-weight: 700; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; }
+/* What REINS stands for: a dark band above the headline, the initials in amber. */
+.acronym { display: inline-block; margin: 0 0 22px; padding: 8px 18px; border-radius: 6px; background: var(--bar);
+           color: var(--bar-text); font-size: clamp(17px, 2.1vw, 22px); font-weight: 600; line-height: 1.45; }
+.acronym b { color: var(--attention); font-weight: 800; }
+.acronym .part { white-space: nowrap; }
+.acronym-he { margin: -12px 0 22px; color: var(--muted); font-size: 17px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 h1 { margin: 0 auto; font-size: clamp(34px, 4.8vw, 56px); line-height: 1.1; font-weight: 700; text-wrap: balance; }
 h1 span { display: block; }
 .lead { margin: 22px auto 0; max-width: 62ch; color: var(--muted); font-size: clamp(18px, 2vw, 21px); }
