@@ -79,3 +79,43 @@ div.bg-accent.rounded-3xl:has(.message-content) .prose :not(pre) > code { backgr
 /* What REINS stands for, under the sign-in heading (added by reins-chat.js). */
 .reins-acronym { margin: 0; font-size: 15px; line-height: 1.4; color: hsl(var(--muted-foreground)); }
 .reins-acronym b { font-weight: 800; color: hsl(var(--primary)); }
+
+/* The sign-in page: Google and a code by email (reins-chat.js, addSignin). */
+.reins-signin { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.reins-signin__or {
+  display: flex; align-items: center; gap: 12px; margin: 6px 0 2px;
+  color: hsl(var(--muted-foreground)); font-size: 14px;
+}
+.reins-signin__or::before, .reins-signin__or::after { content: ""; flex: 1; border-top: 1px solid hsl(var(--border)); }
+.reins-signin__btn, .reins-signin__primary {
+  display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+  min-height: 40px; padding: 0 14px; border-radius: calc(var(--radius) - 2px);
+  font: inherit; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer;
+}
+.reins-signin__btn {
+  border: 1px solid hsl(var(--input)); background: hsl(var(--card)); color: hsl(var(--foreground));
+}
+.reins-signin__btn:hover { background: hsl(var(--accent)); }
+.reins-signin__btn svg { width: 18px; height: 18px; flex: none; }
+.reins-signin__primary {
+  border: 1px solid hsl(var(--primary)); background: hsl(var(--primary)); color: hsl(var(--primary-foreground));
+}
+.reins-signin__primary:hover { filter: brightness(1.08); }
+.reins-signin__btn:disabled, .reins-signin__primary:disabled { opacity: .55; cursor: default; }
+.reins-signin__panel { display: flex; flex-direction: column; gap: 12px; }
+.reins-signin__panel label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; }
+.reins-signin__panel input {
+  height: 40px; padding: 0 12px; border: 1px solid hsl(var(--input)); border-radius: calc(var(--radius) - 2px);
+  background: hsl(var(--background)); color: hsl(var(--foreground)); font: inherit; font-size: 16px;
+}
+.reins-signin__panel input[name="code"] { font-size: 22px; letter-spacing: 6px; text-align: center; }
+.reins-signin__panel input:focus { outline: 2px solid hsl(var(--ring)); outline-offset: 1px; }
+.reins-signin__msg { margin: 0; padding: 10px 12px; border-radius: calc(var(--radius) - 2px);
+  background: hsl(var(--secondary)); color: hsl(var(--secondary-foreground)); font-size: 14px; line-height: 1.45; }
+.reins-signin__msg.is-error { background: hsl(var(--destructive) / .1); color: hsl(var(--destructive)); }
+.reins-signin__hint { margin: -6px 0 0; color: hsl(var(--muted-foreground)); font-size: 13px; }
+.reins-signin__row { display: flex; justify-content: space-between; gap: 8px; }
+.reins-signin__link {
+  align-self: flex-start; padding: 0; border: 0; background: none; color: hsl(var(--primary));
+  font: inherit; font-size: 14px; cursor: pointer; text-decoration: underline;
+}

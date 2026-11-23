@@ -36,6 +36,7 @@ from backend.routes import (
     review,
     sessions,
     setup as setup_routes,
+    signin as signin_routes,
     steps as step_routes,
     students,
     submissions,
@@ -119,6 +120,7 @@ app.add_middleware(
 )
 
 app.include_router(login.router, prefix="/api")
+app.include_router(signin_routes.router, prefix="/api")
 app.include_router(sessions.router, prefix="/api")
 app.include_router(ex_routes.router, prefix="/api")
 app.include_router(ask.router, prefix="/api")

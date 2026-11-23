@@ -405,10 +405,14 @@ async def _chat_login():
         await cl.Message(content=f"🛠️ Dev mode: auto-login with `{dev_code}`.").send()
         code, password = dev_code, dev_code  # the default password is the code
     else:
-        code = (await _prompt(_t("ask_username"))).upper()
+        by_email = await _email_signin_on()
+        code = (await _prompt(_t("ask_username_email" if by_email else "ask_username"))).strip()
         if not code:
             await cl.Message(content=_t("no_username")).send()
             return None
+        if by_email and "@" in code:
+            return await _chat_email_login(code)
+        code = code.upper()
         password = await _prompt(_t("ask_password"))
         if not password:
             await cl.Message(content=_t("no_password")).send()
@@ -426,7 +430,54 @@ async def _chat_login():
     return r.json()
 
 
-# What _pick returns when the teacher's change (a reset, a withdrawn question)
+async def _api_post(path: str, body: dict):
+    """POST to this server's API; None when it can't be reached."""
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            return await client.post(f"{BACKEND}{path}", json=body)
+    except httpx.HTTPError as e:
+        log.warning("%s failed: %s", path, e)
+        return None
+
+
+async def _email_signin_on() -> bool:
+    """Does the lecturer let students sign in with a code sent by email?"""
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            r = await client.get(f"{BACKEND}/api/login/methods")
+        return r.status_code == 200 and bool(r.json().get("email"))
+    except (httpx.HTTPError, ValueError):
+        return False
+
+
+async def _chat_email_login(addr: str):
+    """Sign in with a code sent to this address (the chat without its sign-in
+    page). The login response, or None."""
+    r = await _api_post("/api/login/email", {"email": addr, "to": "chat", "lang": _lang()})
+    if r is None:
+        await cl.Message(content=_t("no_server")).send()
+        return None
+    if r.status_code != 200:
+        key = {422: "bad_email", 429: "too_many_codes"}.get(r.status_code, "login_failed")
+        await cl.Message(content=_t(key)).send()
+        return None
+    for attempt in range(3):
+        code = await _prompt(_t("ask_email_code", email=addr) if attempt == 0 else _t("wrong_email_code"))
+        if not code:
+            break
+        v = await _api_post("/api/login/email/verify", {"email": addr, "code": code, "to": "chat"})
+        if v is None:
+            await cl.Message(content=_t("no_server")).send()
+            return None
+        if v.status_code == 200:
+            return v.json()
+        if v.status_code != 401:
+            break
+    await cl.Message(content=_t("email_code_failed")).send()
+    return None
+
+
+# What _pick returns when the teacher's change# What _pick returns when the teacher's change (a reset, a withdrawn question)
 # or a reconnect made the question void (_interrupt_pick).
 _INTERRUPTED = "__interrupted__"
 

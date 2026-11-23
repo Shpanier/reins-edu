@@ -13,6 +13,20 @@ TEXTS: dict[str, tuple[str, str]] = {
     # --- signing in (only when the chat asks; the sign-in page has its own labels) ---
     "ask_username": ("🎓 ברוכים הבאים ל־REINS Edu. הקלידו את שם המשתמש שלכם.",
                      "🎓 Welcome to REINS Edu. Type your username."),
+    "ask_username_email": ("🎓 ברוכים הבאים ל־REINS Edu. הקלידו את שם המשתמש שלכם, או את כתובת המייל כדי לקבל קוד כניסה.",
+                           "🎓 Welcome to REINS Edu. Type your username, or your email address to get a sign-in code."),
+    "ask_email_code": ("📧 אם הכתובת {email} רשומה אצל המרצה, שלחנו אליה קוד בן 6 ספרות. הקלידו אותו כאן. "
+                       "לא הגיע תוך דקה? כדאי לבדוק בתיקיית הספאם.",
+                       "📧 If {email} is on your lecturer's list, a 6-digit code is on its way to it. Type it here. "
+                       "Nothing after a minute? Look in your spam folder."),
+    "wrong_email_code": ("❌ הקוד שגוי או שפג תוקפו. נסו שוב.", "❌ Wrong or expired code. Try again."),
+    "email_code_failed": ("❌ הכניסה עם הקוד לא הצליחה. רעננו את הדף כדי לבקש קוד חדש, או היכנסו עם שם המשתמש והסיסמה.",
+                          "❌ Signing in with the code didn't work. Reload the page to ask for a new code, "
+                          "or sign in with your username and password."),
+    "bad_email": ("❌ זו לא כתובת מייל תקינה. רעננו את הדף כדי לנסות שוב.",
+                  "❌ That isn't a valid email address. Reload the page to try again."),
+    "too_many_codes": ("❌ נשלחו יותר מדי קודים מהרשת הזאת. המתינו כמה דקות ונסו שוב.",
+                       "❌ Too many codes were asked for from this network. Wait a few minutes and try again."),
     "no_username": ("לא התקבל שם משתמש. רעננו את הדף כדי לנסות שוב.",
                     "No username was received. Reload the page to try again."),
     "ask_password": ("עכשיו את הסיסמה. (עד שהמרצה משנה אותה, היא זהה לשם המשתמש.)",

@@ -45,8 +45,232 @@
     p.innerHTML = "<b>R</b>eviewed <b>E</b>xplanations, <b>I</b>nstructor-<b>N</b>avigated <b>S</b>teps";
     h.parentElement.appendChild(p);
   };
+  // The sign-in page: Google and a code by email under the username and
+  // password, when the lecturer turned them on (Settings; backend/signin.py).
+  // The server answers with Chainlit's own sign-in cookie, so the chat opens
+  // as if the student had typed a password.
+  const SIGNIN_TEXT = {
+    he: {
+      or: "או", google: "כניסה עם Google", email: "כניסה עם קוד במייל",
+      emailLabel: "כתובת המייל", send: "שליחת קוד",
+      sent: "אם הכתובת {email} רשומה אצל המרצה, שלחנו אליה קוד בן 6 ספרות. הקוד תקף ל־{minutes} דקות.",
+      spam: "לא הגיע תוך דקה? כדאי לבדוק בתיקיית הספאם.",
+      codeLabel: "הקוד מהמייל", signIn: "כניסה", resend: "שליחת קוד חדש", back: "חזרה לשם משתמש וסיסמה",
+      bad: "הקוד שגוי או שפג תוקפו.", tooMany: "התבקשו מכאן יותר מדי קודים. המתינו כמה דקות ונסו שוב.",
+      notEmail: "זו לא כתובת מייל תקינה.", noServer: "השרת לא עונה. נסו שוב בעוד רגע.",
+      errors: {
+        unknown: "הכתובת {email} לא רשומה באף קורס. היכנסו עם שם המשתמש והסיסמה, או בקשו מהמרצה לרשום את הכתובת הזאת.",
+        ambiguous: "לכתובת {email} יש יותר מחשבון אחד. היכנסו עם שם המשתמש והסיסמה.",
+        blocked: "עם חשבון של מרצה נכנסים רק מהמחשב של המרצה.",
+        expired: "הכניסה עם Google לקחה יותר מדי זמן, או שהתחילה בדפדפן אחר. נסו שוב.",
+        cancelled: "הכניסה עם Google בוטלה.",
+        google_error: "Google לא השלים את הכניסה. נסו שוב בעוד רגע.",
+        unverified: "כתובת המייל של חשבון ה־Google הזה לא אומתה. היכנסו עם שם המשתמש והסיסמה.",
+        off: "הכניסה עם Google לא פעילה כרגע. היכנסו עם שם המשתמש והסיסמה.",
+        no_chat_page: "הצ'אט עוד לא מוכן לכניסה עם Google: המרצה צריך להפעיל מחדש את REINS Edu.",
+      },
+    },
+    en: {
+      or: "or", google: "Sign in with Google", email: "Sign in with a code by email",
+      emailLabel: "Email address", send: "Send me a code",
+      sent: "If {email} is on your lecturer's list, a 6-digit code is on its way to it. It works for {minutes} minutes.",
+      spam: "Nothing after a minute? Look in your spam folder.",
+      codeLabel: "The code from the email", signIn: "Sign in", resend: "Send a new code",
+      back: "Back to username and password",
+      bad: "Wrong or expired code.", tooMany: "Too many codes were asked for from here. Wait a few minutes and try again.",
+      notEmail: "That isn't an email address.", noServer: "The server isn't answering. Try again in a moment.",
+      errors: {
+        unknown: "{email} isn't on any class list. Sign in with your username and password, or ask your lecturer to add this address.",
+        ambiguous: "More than one account has the address {email}. Sign in with your username and password.",
+        blocked: "A lecturer's account signs in only on the lecturer's computer.",
+        expired: "Signing in with Google took too long, or started in another browser. Try again.",
+        cancelled: "Signing in with Google was cancelled.",
+        google_error: "Google didn't complete the sign-in. Try again in a moment.",
+        unverified: "This Google account's email address isn't verified. Sign in with your username and password.",
+        off: "Signing in with Google is off. Sign in with your username and password.",
+        no_chat_page: "The chat isn't ready for Google sign-in yet: the lecturer needs to restart REINS Edu.",
+      },
+    },
+  };
+  const GOOGLE_G = '<svg viewBox="0 0 48 48" aria-hidden="true">' +
+    '<path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>' +
+    '<path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>' +
+    '<path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>' +
+    '<path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
+  // null: not asked yet; false: the server offers neither (or is another program).
+  let methods = null;
+  const signin = { step: "buttons", email: "", minutes: 10, message: "", tone: "" };
+  // Back from Google with ?signin_error=<why>&email=<address> (backend/routes/signin.py):
+  // said in the box under the form, then removed from the address.
+  const googleBack = (() => {
+    const q = new URLSearchParams(location.search);
+    const why = q.get("signin_error");
+    if (!why) return null;
+    const email = q.get("email") || "";
+    q.delete("signin_error");
+    q.delete("email");
+    const rest = q.toString();
+    history.replaceState(null, "", location.pathname + (rest ? "?" + rest : "") + location.hash);
+    return { why, email };
+  })();
+  const onLogin = () => /\/login\/?$/.test(location.pathname);
+  const chatBase = () => location.pathname.replace(/\/login\/?$/, "");
+  const signinLang = () => {
+    const forced = methods && methods.chat_language;
+    if (forced === "he" || forced === "en") return forced;
+    return (navigator.languages || [navigator.language]).some((l) => /^he\b/i.test(l || "")) ? "he" : "en";
+  };
+  const fill = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ""));
+  const el = (tag, attrs, children) => {
+    const e = document.createElement(tag);
+    Object.entries(attrs || {}).forEach(([k, v]) => {
+      if (k === "text") e.textContent = v;
+      else if (k === "html") e.innerHTML = v;
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v);
+    });
+    (children || []).forEach((c) => c && e.appendChild(c));
+    return e;
+  };
+  const post = (path, body) => fetch(path, {
+    method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
+    body: JSON.stringify(body),
+  });
+
+  const renderSignin = (box, form) => {
+    const T = SIGNIN_TEXT[signinLang()];
+    if (googleBack && !googleBack.shown) {
+      googleBack.shown = true;
+      signin.message = fill(T.errors[googleBack.why] || T.errors.google_error, { email: googleBack.email });
+      signin.tone = "error";
+    }
+    box.dir = signinLang() === "he" ? "rtl" : "ltr";
+    box.replaceChildren();
+    form.style.display = signin.step === "buttons" ? "" : "none";
+    const note = signin.message
+      ? el("p", { class: "reins-signin__msg" + (signin.tone ? " is-" + signin.tone : ""), role: "status", text: signin.message })
+      : null;
+    if (signin.step === "buttons") {
+      if (note) box.appendChild(note);
+      box.appendChild(el("div", { class: "reins-signin__or" }, [el("span", { text: T.or })]));
+      if (methods.google) {
+        const a = el("a", {
+          class: "reins-signin__btn", html: GOOGLE_G,
+          href: "/api/login/google?to=chat",
+        });
+        a.appendChild(el("span", { text: T.google }));
+        box.appendChild(a);
+      }
+      if (methods.email) {
+        box.appendChild(el("button", {
+          type: "button", class: "reins-signin__btn", text: T.email,
+          onclick: () => { signin.step = "email"; signin.message = ""; signin.tone = ""; renderSignin(box, form); },
+        }));
+      }
+      return;
+    }
+    const busy = (b) => box.querySelectorAll("button, input").forEach((x) => { x.disabled = b; });
+    const sendCode = async () => {
+      const input = box.querySelector("input[type=email]");
+      signin.email = (input ? input.value : signin.email).trim();
+      busy(true);
+      try {
+        const r = await post("/api/login/email", { email: signin.email, to: "chat", lang: signinLang() });
+        if (r.ok) {
+          signin.minutes = (await r.json()).minutes || 10;
+          signin.step = "code";
+          signin.message = fill(T.sent, { email: signin.email, minutes: signin.minutes });
+          signin.tone = "";
+        } else {
+          signin.message = r.status === 429 ? T.tooMany : r.status === 422 ? T.notEmail : T.noServer;
+          signin.tone = "error";
+        }
+      } catch {
+        signin.message = T.noServer;
+        signin.tone = "error";
+      }
+      renderSignin(box, form);
+    };
+    const checkCode = async () => {
+      const code = (box.querySelector("input[name=code]").value || "").replace(/\D/g, "");
+      busy(true);
+      try {
+        const r = await post("/api/login/email/verify", { email: signin.email, code, to: "chat" });
+        if (r.ok) {
+          location.href = chatBase() + "/";
+          return;
+        }
+        signin.message = r.status === 401 ? T.bad : T.noServer;
+      } catch {
+        signin.message = T.noServer;
+      }
+      signin.tone = "error";
+      renderSignin(box, form);
+    };
+    const back = el("button", {
+      type: "button", class: "reins-signin__link", text: T.back,
+      onclick: () => { signin.step = "buttons"; signin.message = ""; signin.tone = ""; renderSignin(box, form); },
+    });
+    if (signin.step === "email") {
+      const input = el("input", { type: "email", dir: "ltr", autocomplete: "email", value: signin.email });
+      box.appendChild(el("form", {
+        class: "reins-signin__panel", novalidate: "",
+        onsubmit: (e) => { e.preventDefault(); if (input.value.includes("@")) sendCode(); },
+      }, [
+        el("label", {}, [el("span", { text: T.emailLabel }), input]),
+        note,
+        el("button", { type: "submit", class: "reins-signin__primary", text: T.send }),
+        back,
+      ]));
+      setTimeout(() => input.focus(), 0);
+      return;
+    }
+    const codeInput = el("input", {
+      name: "code", dir: "ltr", inputmode: "numeric", autocomplete: "one-time-code", maxlength: "6",
+      oninput: (e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 6); },
+    });
+    box.appendChild(el("form", {
+      class: "reins-signin__panel", novalidate: "",
+      onsubmit: (e) => { e.preventDefault(); if (codeInput.value.length === 6) checkCode(); },
+    }, [
+      note,
+      el("label", {}, [el("span", { text: T.codeLabel }), codeInput]),
+      el("p", { class: "reins-signin__hint", text: T.spam }),
+      el("button", { type: "submit", class: "reins-signin__primary", text: T.signIn }),
+      el("div", { class: "reins-signin__row" }, [
+        back,
+        el("button", { type: "button", class: "reins-signin__link", text: T.resend, onclick: sendCode }),
+      ]),
+    ]));
+    setTimeout(() => codeInput.focus(), 0);
+  };
+
+  const addSignin = () => {
+    if (!onLogin()) return;
+    if (methods === null) {
+      methods = false;
+      fetch("/api/login/methods").then((r) => (r.ok ? r.json() : null)).then((m) => {
+        methods = m && (m.google || m.email) && m.chat_page ? m : false;
+        addSignin();
+      }).catch(() => {});
+      return;
+    }
+    if (!methods) return;
+    // Chainlit's own form: the one with the password field.
+    const pw = document.querySelector('form:not(.reins-signin__panel) input[type="password"]');
+    const form = pw && pw.closest("form");
+    if (!form) return;
+    let box = document.querySelector(".reins-signin");
+    if (box && box.previousElementSibling === form) return;
+    if (box) box.remove();
+    box = el("div", { class: "reins-signin" });
+    form.insertAdjacentElement("afterend", box);
+    renderSignin(box, form);
+  };
+
   const scan = () => {
     addAcronym();
+    addSignin();
     document.querySelectorAll(IN_MESSAGES).forEach(mark);
     document.querySelectorAll(LABELS).forEach(markLabel);
     document.querySelectorAll("input, textarea").forEach(markField);

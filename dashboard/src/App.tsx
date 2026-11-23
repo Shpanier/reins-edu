@@ -13,7 +13,7 @@ import { VerifyTraceModal } from "./components/VerifyTraceModal";
 import { ReviewQueue } from "./components/ReviewQueue";
 import { StepChecks } from "./components/StepChecks";
 import { PacingPanel } from "./components/PacingPanel";
-import { LoginGate } from "./components/LoginGate";
+import { hasSigninReturn, LoginGate } from "./components/LoginGate";
 import { ExercisesPanel } from "./components/ExercisesPanel";
 import { CoursesPanel } from "./components/CoursesPanel";
 import { alertBeep, alertTotal, needsAttention, primeAudio } from "./proctor";
@@ -47,7 +47,8 @@ type Boot =
  *  signed-out browser for the sign-in, anyone else gets the dashboard. */
 export function App() {
   const { t } = useLang();
-  const [authed, setAuthed] = useState<boolean>(() => !!auth.get());
+  // Back from Google with a ticket: the sign-in screen takes it, even over an older sign-in.
+  const [authed, setAuthed] = useState<boolean>(() => !!auth.get() && !hasSigninReturn());
   const [boot, setBoot] = useState<Boot>({ state: "loading" });
 
   const check = useCallback(() => {

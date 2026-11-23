@@ -39,6 +39,12 @@ def login_with_code(code: str, password: str, ip: str, allow_teacher: bool = Tru
         return None
     if row["role"] == "teacher" and not allow_teacher:
         return {"blocked": True}
+    return issue_token(row)
+
+
+def issue_token(row) -> dict:
+    """A new bearer token for this user ({id, username, role}): the answer to a
+    successful sign-in, whichever way it was made (password, email code, Google)."""
     token = secrets.token_urlsafe(24)
     with db.conn() as c:
         c.execute("INSERT INTO auth_tokens (token, user_id) VALUES (?, ?)", (token, row["id"]))
