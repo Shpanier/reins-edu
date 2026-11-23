@@ -270,7 +270,7 @@
 
   // The small logo of Azrieli College of Engineering Jerusalem, where REINS Edu
   // is made: an email link to its author (GET /api/contact; off hides it).
-  // Under the sign-in form, and in the top bar of the chat.
+  // Under the REINS Edu logo of the sign-in page, and in the top bar of the chat.
   let contact = null; // null: not asked yet; false: no logo
   const collegeLink = (cls) => {
     const he = signinLang() === "he";
@@ -296,14 +296,15 @@
     }
     if (!contact) return;
     if (onLogin()) {
-      const pw = document.querySelector('form:not(.reins-signin__panel) input[type="password"]');
-      const form = pw && pw.closest("form");
-      if (!form) return;
-      const column = form.parentElement;
-      const old = column.querySelector(":scope > .reins-college");
-      if (old && old === column.lastElementChild) return;
-      if (old) old.remove();
-      column.appendChild(collegeLink("reins-college--login"));
+      // Right under the REINS Edu logo at the top of the sign-in column.
+      const logo = [...document.querySelectorAll("img")]
+        .find((i) => /\/logo(\?|$)/.test(i.getAttribute("src") || "") && !i.closest("#header"));
+      const row = logo && logo.parentElement;
+      if (!row) return;
+      const next = row.nextElementSibling;
+      if (next && next.classList.contains("reins-college")) return;
+      document.querySelectorAll(".reins-college--login").forEach((x) => x.remove());
+      row.insertAdjacentElement("afterend", collegeLink("reins-college--login"));
       return;
     }
     const toggle = document.querySelector("#header #theme-toggle");

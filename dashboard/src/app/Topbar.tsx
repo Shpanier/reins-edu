@@ -101,6 +101,7 @@ export function Rail({ tab, onTab, settings, plugin, bell, waiting, onShare, onS
     <aside className="vc-rail">
       <div className="vc-rail__brand">
         <Brand />
+        <CollegeLink className="vc-rail__college" />
         <Acronym />
       </div>
       <nav className="vc-nav" aria-label="REINS Edu">
@@ -126,7 +127,6 @@ export function Rail({ tab, onTab, settings, plugin, bell, waiting, onShare, onS
           <AccountMenu settings={settings} plugin={plugin} onSettings={onSettings} onVerify={onVerify} onSignOut={onSignOut} />
         </div>
         <Button variant="attention" icon={<Share2 />} className="vc-rail__share" onClick={onShare}>{t("shareBtn")}</Button>
-        <CollegeLink className="vc-rail__college" />
       </div>
     </aside>
   );

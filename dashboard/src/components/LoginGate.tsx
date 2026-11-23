@@ -179,6 +179,7 @@ export function LoginGate({ onLoggedIn }: Props) {
     <div className="vc-auth">
       <form className="vc-auth__card" onSubmit={submit}>
         <div className="vc-auth__top"><Brand /><LanguageToggle /></div>
+        <CollegeLink className="vc-auth__college" />
         <Acronym line />
         <h1 className="vc-auth__title">{t("loginTitle")}</h1>
         <p className="vc-auth__lead">{t("loginLead")}</p>
@@ -244,7 +245,6 @@ export function LoginGate({ onLoggedIn }: Props) {
           </div>
         )}
         <p className="vc-auth__foot">{t("loginFoot")}</p>
-        <div className="vc-auth__college"><CollegeLink /></div>
       </form>
     </div>
   );
