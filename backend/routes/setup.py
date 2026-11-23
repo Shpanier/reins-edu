@@ -11,6 +11,7 @@ class going without a terminal.
   GET  /api/share                 the students' link(s) and the tunnel's state
   POST /api/share/tunnel          start / stop the tunnel; download cloudflared
   GET  /api/overview              counts for the dashboard's first-steps checklist
+  GET  /api/contact               the email address behind the college's logo (public)
 """
 import asyncio
 import os
@@ -39,6 +40,13 @@ def setup_status(request: Request):
     still has to be created, and whether this browser may create it."""
     return {"needs_teacher": _teacher_count() == 0, "local": deps.is_local_request(request),
             "version": settings.VERSION}
+
+
+@router.get("/contact")
+def contact():
+    """Public: the address the college's logo links to, in the dashboard and
+    the student chat (None: no logo)."""
+    return settings.contact()
 
 
 class FirstTeacher(BaseModel):

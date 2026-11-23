@@ -192,3 +192,12 @@ def test_starting_a_tunnel_without_the_program_says_so(client, teacher, monkeypa
 def test_overview_counts(client, teacher):
     o = client.get("/api/overview", headers=teacher).json()
     assert o["exercises"] >= 1 and isinstance(o["students"], int) and "llm_ready" in o
+
+
+def test_the_college_logo_links_to_the_author_unless_turned_off(client, monkeypatch):
+    monkeypatch.delenv("REINS_CONTACT_EMAIL", raising=False)
+    assert "@" in client.get("/api/contact").json()["email"]
+    monkeypatch.setenv("REINS_CONTACT_EMAIL", "someone@example.edu")
+    assert client.get("/api/contact").json() == {"email": "someone@example.edu"}
+    monkeypatch.setenv("REINS_CONTACT_EMAIL", "off")
+    assert client.get("/api/contact").json() == {"email": None}

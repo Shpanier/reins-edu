@@ -7,6 +7,7 @@ import { LanguageToggle, useLang, type StringKey } from "../i18n";
 import { describeError } from "../lib/errors";
 import { Button, Field, Notice } from "./ui";
 import { Acronym, Brand } from "../app/FirstRun";
+import { CollegeLink } from "../app/CollegeLink";
 
 interface Props {
   onLoggedIn: () => void;
@@ -243,6 +244,7 @@ export function LoginGate({ onLoggedIn }: Props) {
           </div>
         )}
         <p className="vc-auth__foot">{t("loginFoot")}</p>
+        <div className="vc-auth__college"><CollegeLink /></div>
       </form>
     </div>
   );

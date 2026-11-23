@@ -101,6 +101,16 @@
 .vc-auth__lead { color: var(--c-text-3); font-size: var(--fs-md); margin-bottom: 20px; }
 .vc-auth__foot { margin-top: 16px; color: var(--c-text-3); font-size: var(--fs-xs); text-align: center; }
 
+/* The college's logo: an email link to REINS Edu's author (CollegeLink.tsx). */
+.vc-college { display: inline-flex; border-radius: 6px; line-height: 0; }
+.vc-college img { width: auto; height: 48px; padding: 3px 6px; border-radius: 6px; background: #fff; transition: box-shadow 0.15s; }
+.vc-college:hover img, .vc-college:focus-visible img { box-shadow: 0 0 0 2px var(--c-brand); }
+.vc-college:focus-visible { outline: none; }
+.vc-auth__college { display: flex; justify-content: center; margin-top: 14px; }
+.vc-rail__college { align-self: center; margin-top: 6px; }
+.vc-rail__college img { height: 40px; }
+.vc-rail__college:hover img, .vc-rail__college:focus-visible img { box-shadow: 0 0 0 2px var(--c-attention); }
+
 /* Google and the email code above the username and password, with "or" between. */
 .vc-auth__alt { display: flex; flex-direction: column; gap: 10px; }
 .vc-auth__google { width: 100%; min-height: 44px; font-size: var(--fs-md); gap: 10px; }
@@ -182,6 +192,7 @@
   .vc-nav__item { width: auto; white-space: nowrap; }
   .vc-rail__foot { margin: 0; margin-inline-start: auto; flex-direction: row; align-items: center; padding: 0; }
   .vc-rail__status { display: none; }
+  .vc-rail__college { display: none; }
   .vc-rail .vc-menu__list { inset-block-start: calc(100% + 6px); inset-block-end: auto; inset-inline-start: auto; inset-inline-end: 0; }
   .vc-rail .vc-notify-panel { inset-block-start: calc(100% + 6px); inset-block-end: auto; inset-inline-start: auto; inset-inline-end: 0; }
 }

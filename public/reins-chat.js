@@ -268,9 +268,53 @@
     renderSignin(box, form);
   };
 
+  // The small logo of Azrieli College of Engineering Jerusalem, where REINS Edu
+  // is made: an email link to its author (GET /api/contact; off hides it).
+  // Under the sign-in form, and in the top bar of the chat.
+  let contact = null; // null: not asked yet; false: no logo
+  const collegeLink = (cls) => {
+    const he = signinLang() === "he";
+    const a = el("a", {
+      class: "reins-college " + cls, href: "mailto:" + contact,
+      title: (he ? "שליחת מייל: " : "Send an email: ") + contact,
+    });
+    a.appendChild(el("img", {
+      src: "/public/azrieli.png", width: "160", height: "98",
+      alt: he ? "המכללה האקדמית להנדסה עזריאלי ירושלים: שליחת מייל"
+        : "Azrieli College of Engineering Jerusalem: send an email",
+    }));
+    return a;
+  };
+  const addCollege = () => {
+    if (contact === null) {
+      contact = false;
+      fetch("/api/contact").then((r) => (r.ok ? r.json() : null)).then((d) => {
+        contact = (d && d.email) || false;
+        addCollege();
+      }).catch(() => {});
+      return;
+    }
+    if (!contact) return;
+    if (onLogin()) {
+      const pw = document.querySelector('form:not(.reins-signin__panel) input[type="password"]');
+      const form = pw && pw.closest("form");
+      if (!form) return;
+      const column = form.parentElement;
+      const old = column.querySelector(":scope > .reins-college");
+      if (old && old === column.lastElementChild) return;
+      if (old) old.remove();
+      column.appendChild(collegeLink("reins-college--login"));
+      return;
+    }
+    const toggle = document.querySelector("#header #theme-toggle");
+    if (!toggle || toggle.parentElement.querySelector(".reins-college")) return;
+    toggle.insertAdjacentElement("beforebegin", collegeLink("reins-college--header"));
+  };
+
   const scan = () => {
     addAcronym();
     addSignin();
+    addCollege();
     document.querySelectorAll(IN_MESSAGES).forEach(mark);
     document.querySelectorAll(LABELS).forEach(markLabel);
     document.querySelectorAll("input, textarea").forEach(markField);

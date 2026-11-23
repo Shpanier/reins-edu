@@ -6,6 +6,7 @@ import { connection } from "../lib/connection";
 import { Button } from "../components/ui";
 import { Acronym, Brand } from "./FirstRun";
 import { textDir } from "../lib/textDir";
+import { CollegeLink } from "./CollegeLink";
 
 export type Tab = "monitor" | "exercises" | "courses";
 
@@ -125,6 +126,7 @@ export function Rail({ tab, onTab, settings, plugin, bell, waiting, onShare, onS
           <AccountMenu settings={settings} plugin={plugin} onSettings={onSettings} onVerify={onVerify} onSignOut={onSignOut} />
         </div>
         <Button variant="attention" icon={<Share2 />} className="vc-rail__share" onClick={onShare}>{t("shareBtn")}</Button>
+        <CollegeLink className="vc-rail__college" />
       </div>
     </aside>
   );

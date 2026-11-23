@@ -49,6 +49,8 @@ export const shellStrings = defineStrings(
     loginBad: "Wrong username or password.",
     loginNotTeacher: "This is a student's account. Sign in with a lecturer's account.",
     loginFoot: "Students use a different link: ask your lecturer for it.",
+    collegeAlt: "Azrieli College of Engineering Jerusalem: send an email",
+    collegeTitle: "Send an email: {email}",
 
     // first run
     frWelcome: "Welcome to REINS Edu",
@@ -192,6 +194,8 @@ export const shellStrings = defineStrings(
     loginBad: "שם המשתמש או הסיסמה שגויים.",
     loginNotTeacher: "זה חשבון של סטודנט. היכנסו עם חשבון של מרצה.",
     loginFoot: "לסטודנטים יש קישור אחר: בקשו אותו מהמרצה.",
+    collegeAlt: "המכללה האקדמית להנדסה עזריאלי ירושלים: שליחת מייל",
+    collegeTitle: "שליחת מייל: {email}",
 
     frWelcome: "ברוכים הבאים ל־REINS Edu",
     frLead: "שני צעדים קצרים, ואפשר להתחיל שיעור.",

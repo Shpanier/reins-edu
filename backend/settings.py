@@ -200,6 +200,20 @@ def save_llm(provider_id: str, key: Optional[str]) -> dict[str, Any]:
 # --- the student chat's language ---------------------------------------------------
 
 
+# --- the college's logo ------------------------------------------------------------
+# The dashboard and the student chat show the logo of Azrieli College of
+# Engineering Jerusalem, where REINS Edu is made, as an email link to its
+# author. REINS_CONTACT_EMAIL sends it elsewhere; off hides the logo.
+AUTHOR_EMAIL = "shpanier@jce.ac.il"
+
+
+def contact() -> dict[str, Optional[str]]:
+    v = (names.env("CONTACT_EMAIL") or AUTHOR_EMAIL).strip()
+    if v.lower() in ("off", "none", "false", "0", "no") or "@" not in v:
+        return {"email": None}
+    return {"email": v}
+
+
 def chat_language() -> str:
     v = os.environ.get("CHAT_LANGUAGE", "auto").strip().lower()
     return v if v in CHAT_LANGUAGES else "auto"
