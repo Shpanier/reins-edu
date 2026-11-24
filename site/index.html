@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>REINS Edu: an AI tutor for programming labs that the lecturer controls</title>
-  <meta name="description" content="REINS Edu (Reviewed Explanations, Instructor-Navigated Steps). Students work through a programming lab with an AI tutor that guides instead of handing out answers. The lecturer sees every chat, approves answers and paces the class. Open source, runs on your own computer.">
+  <meta name="description" content="REINS Edu (Reviewed Explanations, Instructor-Navigated Steps). Students work through a programming lab in a chat that gives hints, not solutions. The lecturer sees every chat, chooses the answers and sets the pace. Open source, runs on your own computer.">
   <link rel="canonical" href="https://shpanier.github.io/reins-edu/">
   <link rel="alternate" hreflang="he" href="https://shpanier.github.io/reins-edu/he/">
   <link rel="alternate" hreflang="en" href="https://shpanier.github.io/reins-edu/">
@@ -20,6 +20,7 @@
   <div class="wrap">
     <a class="brand" href="./" title="REINS Edu: Reviewed Explanations, Instructor-Navigated Steps"><img src="img/mark.svg" alt="" width="32" height="32">REINS Edu</a>
     <nav aria-label="Sections">
+      <a href="#idea">The idea</a>
       <a href="#control">What you control</a>
       <a href="#class">A class</a>
       <a href="#install">Install</a>
@@ -35,10 +36,9 @@
     <p class="acronym"><span class="sr">REINS stands for </span><span class="part"><b>R</b>eviewed <b>E</b>xplanations,</span> <span class="part"><b>I</b>nstructor-<b>N</b>avigated <b>S</b>teps</span></p>
     <p class="affil"><a href="mailto:shpanier@jce.ac.il" title="Send an email: shpanier@jce.ac.il"><img src="img/azrieli.png" width="333" height="205" alt="Azrieli College of Engineering Jerusalem: send an email"></a></p>
     <h1><span>An AI tutor for programming labs.</span> <span>The lecturer holds the reins.</span></h1>
-    <p class="lead">Students work through a lab in a chat with an AI tutor that guides instead of handing out answers.
-      Everything happens live: the lecturer sees every conversation, checks each answer before it reaches the
-      student, and sends it as it is or corrected. The lecturer can also send a question and its answer to the whole
-      class at once, and lead the class step by step.</p>
+    <p class="lead">Students work through the lab in a chat. It isn't an ordinary chat: it won't give them the
+      solution, and its answers don't reach them straight away. Each answer goes to the lecturer first, who sees
+      every conversation as it happens and sets the pace for the class.</p>
     <div class="actions">
       <a class="btn primary" href="#install">Install</a>
       <a class="btn" href="https://github.com/Shpanier/reins-edu">Source on GitHub</a>
@@ -47,55 +47,76 @@
     <figure class="pip">
       <img src="img/both-sides.png" width="2220" height="1410"
            alt="Two screens at the same moment. The lecturer's screen: the steps open for the class, and Waiting for you, with three students' questions in a list and Dana's question about range(1, 5) open beside it, with the step she is on and the answers to send. Inset, Dana's chat: step A3, her question, and the line that says her teacher is reviewing it.">
-      <figcaption>One moment, both sides: Dana's question waits for the lecturer with the answers the tutor drafted, and her chat says the lecturer is looking at it. The class shown is invented.</figcaption>
+      <figcaption>The same moment for the lecturer and for the student. Dana's question waits for the lecturer with a
+        few answers the tutor drafted, and her chat tells her the lecturer is looking at it. The class in the picture
+        is made up.</figcaption>
     </figure>
   </div>
+
+  <section id="idea" class="idea">
+    <div class="wrap">
+      <h2>The idea</h2>
+      <p>We all work with a chatbot all day now, and so do our students. So why not test them in the chat, where
+        they already are?</p>
+      <p>A homework exercise used to show how a student works. Today a chatbot can solve almost any exercise, and
+        grading it tells you very little.</p>
+      <p class="goal">So instead of grading exercises, the lecturer works with the students inside the chat: the
+        teacher in the loop. The aim is to train them not to take the chat's answers for granted, to take an answer
+        a small piece at a time, and to keep asking questions.</p>
+    </div>
+  </section>
 
   <section id="control">
     <div class="wrap">
       <h2>What the lecturer controls</h2>
-      <p class="sub">Students already use AI. REINS Edu puts it inside the lab, where you can see it and steer it.</p>
       <ul class="grid">
-        <li class="card"><h3>Every answer can wait for you</h3>
-          <p>In review mode a student's question is held. The tutor drafts several answers, from a small nudge to a
-            full explanation. You pick one, edit it or write your own, and only then does the student see it.</p></li>
+        <li class="card"><h3>Every answer goes through you</h3>
+          <p>When a student asks something, the answer doesn't arrive right away. The tutor drafts a few, from a
+            small hint to a full explanation, and they come to you. You pick one, fix it or write your own, and only
+            then is it sent. If the question matters to everyone, you can send the answer to the whole class.</p></li>
         <li class="card"><h3>The class moves together</h3>
-          <p>A class-paced lab opens one step at a time for everyone. You see who finished each step, open the next
-            one when the class is ready, and move a single student back or forward.</p></li>
-        <li class="card"><h3>A tutor that guides</h3>
-          <p>The tutor answers with hints and questions, and follows the notes you write for each exercise. It does
-            not hand over the solution.</p></li>
-        <li class="card"><h3>Check that they understand</h3>
-          <p>After a step, or whenever you choose, students get a short question, and their answers come back to
-            you.</p></li>
-        <li class="card"><h3>Nothing waits unseen</h3>
-          <p>Questions, steps to check and answers to decide wait in one list, and the side rail counts them. A
-            pop-up and a bell tell you when something new arrives, whatever page you are on.</p></li>
-        <li class="card"><h3>It stays on your computer</h3>
-          <p>Accounts, chats and grades are kept on the lecturer's computer, and nothing is sent to the authors.
-            Questions go to the model provider you choose, Anthropic or Google, with your own API key.</p></li>
+          <p>You decide how far the class can go. You see who has finished each step and open the next one when the
+            class is ready. You can hold everyone at a step, send the whole class back, or move one student back or
+            ahead. In a homework lab, each student goes at their own pace.</p></li>
+        <li class="card"><h3>Hints, not solutions</h3>
+          <p>Students don't get the solution from the chat. They get a small hint, a clearer one or a full
+            explanation, whichever you choose. When the tutor answers on its own, without waiting for you, it still
+            answers with hints and questions, following the notes you wrote for the exercise.</p></li>
+        <li class="card"><h3>Checking that they understood</h3>
+          <p>After a step, or whenever you decide, the chat asks the student a short question about what they just
+            did. You see the answers. Students who get it right move on to the next step, and you decide about the
+            rest.</p></li>
+        <li class="card"><h3>One screen for everything</h3>
+          <p>The dashboard shows where each student is, who is waiting for an answer, what they asked and what they
+            answered. Everything that needs you is in one list, and a pop-up tells you when something new comes
+            in.</p></li>
+        <li class="card"><h3>After class</h3>
+          <p>Every student's chats are saved, from every lab they worked on, together with their answers to the
+            questions. After class you can go through them and grade each student: how much work they put in, and
+            how good their answers were.</p></li>
       </ul>
-      <figure>
-        <img src="img/desk.png" width="1737" height="1416" loading="lazy"
-             alt="Waiting for you: on the left, three students' questions; on the right, the chosen question, the chat just before it, and the answers to send as they are or edited.">
-        <figcaption>Waiting for you: what waits on the left, the question you chose on the right, with what came before it in the chat and the answers to send.</figcaption>
-      </figure>
     </div>
   </section>
 
   <section id="class">
     <div class="wrap">
-      <h2>A class, start to finish</h2>
-      <p class="sub">Students install nothing. They open one link and sign in.</p>
+      <h2>How a class goes</h2>
+      <p class="sub">Students install nothing. They open a link and sign in.</p>
       <ol class="grid steps">
-        <li class="card"><h3>Write or upload a lab</h3>
-          <p>A lab is a folder: the steps students see, and the notes and expected answers only you see. Three
-            samples are included.</p></li>
-        <li class="card"><h3>Share one link</h3>
-          <p>Add your students from a CSV file, in English or Hebrew, and press <em>Share with students</em>.</p></li>
+        <li class="card"><h3>Prepare a lab</h3>
+          <p>A lab is one folder: the steps students see, plus notes for the tutor and expected answers that only
+            you see. Three sample labs come with the install.</p></li>
+        <li class="card"><h3>Share a link</h3>
+          <p>Add your students from a CSV file, in English or Hebrew, and click <em>Share with students</em>.</p></li>
         <li class="card"><h3>Teach</h3>
-          <p>Watch the chats, approve the tutor's answers, and open the next step when the class is ready.</p></li>
+          <p>Follow the chats, choose the answers to send, and open the next step when the class is ready.</p></li>
       </ol>
+      <figure>
+        <img src="img/desk.png" width="1737" height="1416" loading="lazy"
+             alt="Waiting for you: on the left, three students' questions; on the right, the chosen question, the chat just before it, and the answers to send as they are or edited.">
+        <figcaption>Waiting for you. On the left, the questions waiting for you; on the right, the one you picked:
+          what came before it in the chat, and the answers you can send as they are or after editing.</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -113,10 +134,11 @@
         <div class="line"><code>irm https://raw.githubusercontent.com/Shpanier/reins-edu/main/install.ps1 | iex</code><button type="button" data-copy>Copy</button></div>
       </div>
       <ul class="plain">
-        <li>The first start downloads about 350 MB and takes a few minutes. Later starts take seconds.</li>
+        <li>The first start downloads about 350 MB and takes a few minutes. After that it starts in seconds.</li>
         <li>The dashboard opens at <code>http://localhost:8010</code> and asks you to create your account.</li>
-        <li>Then it asks for an API key from Anthropic or Google. The key stays on your computer, and you pay the
-          provider for what your class uses.</li>
+        <li>Then it asks for an API key from Anthropic or Google. The key stays on your computer, and you pay for
+          what your class uses.</li>
+        <li>Accounts, chats and grades stay on your computer. Nothing is sent to the REINS Edu authors.</li>
       </ul>
       <div class="links">
         <a class="btn" href="https://github.com/Shpanier/reins-edu/blob/main/docs/GUIDE.md">Lecturer's guide</a>
@@ -131,7 +153,7 @@
   <div class="wrap">
     <p><strong>REINS</strong> stands for <strong>R</strong>eviewed <strong>E</strong>xplanations, <strong>I</strong>nstructor-<strong>N</strong>avigated <strong>S</strong>teps: the lecturer holds the reins.</p>
     <p>Code: MIT. Educational materials: CC BY 4.0.</p>
-    <p>Built at the Software Engineering Seminar, Azrieli College of Engineering Jerusalem (JCE).
+    <p>Built at the Software Engineering Seminar of the M.Sc. program in AI at Azrieli College of Engineering Jerusalem (JCE).
       Questions, ideas, collaboration: <a href="https://github.com/Shpanier/reins-edu#license-and-contact">contact</a>.</p>
   </div>
 </footer>
