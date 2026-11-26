@@ -107,3 +107,62 @@ def test_the_students_switch_picks_the_chats_language(monkeypatch):
     monkeypatch.setenv("CHAT_LANGUAGE", "he")
     _with_session(app, monkeypatch, cookie="reins_lang=en", accept="en-US")
     assert app._lang() == "he"
+
+
+def test_a_pass_brings_the_sign_in_back_once(monkeypatch):
+    """The language switch's reload: the pass the page brings back in its
+    cookie stands for the sign-in and the lab, once, and not after its minute."""
+    app = _chat_app()
+    keep = {"login": {"token": "t"}, "course_id": "c", "exercise_id": "e"}
+    ticket = app._issue_pass(keep)
+    _with_session(app, monkeypatch, cookie=f"reins_lang=en; {app.PASS_COOKIE}={ticket}")
+    assert app._take_pass() == keep
+    assert app._take_pass() is None  # used up
+    # Out of time, unknown, or no cookie at all: sign in as usual.
+    late = app._issue_pass(keep)
+    app._passes[late]["until"] -= app.PASS_SECONDS + 1
+    _with_session(app, monkeypatch, cookie=f"{app.PASS_COOKIE}={late}")
+    assert app._take_pass() is None
+    _with_session(app, monkeypatch, cookie=f"{app.PASS_COOKIE}=made-up")
+    assert app._take_pass() is None
+    _with_session(app, monkeypatch)
+    assert app._take_pass() is None
+
+
+def test_the_page_gets_a_pass_only_when_asked_and_signed_in(monkeypatch):
+    import asyncio
+    from types import SimpleNamespace
+    app = _chat_app()
+    sent = []
+
+    async def send_window_message(data):
+        sent.append(data)
+
+    def chat(keep):
+        store = {"keep": keep}
+        monkeypatch.setattr(app, "cl", SimpleNamespace(
+            user_session=SimpleNamespace(get=lambda k, d=None: store.get(k, d)),
+            send_window_message=send_window_message,
+        ))
+
+    keep = {"login": {"token": "t"}, "course_id": "c", "exercise_id": "e"}
+    chat(keep)
+    # Chainlit hands over every window message, its own replies too: no answer to those.
+    for other in ("hello", {"reins": "resume-pass-for", "pass": "x"}, {"type": "x"}, None):
+        asyncio.run(app.on_window_message(other))
+    assert sent == []
+    asyncio.run(app.on_window_message({"reins": "resume-pass", "id": "abc"}))
+    assert sent[-1]["reins"] == "resume-pass-for" and sent[-1]["id"] == "abc"
+    assert app._passes[sent[-1]["pass"]]["keep"] == keep
+    # Not signed in yet: an empty answer, so the page just reloads.
+    chat(None)
+    asyncio.run(app.on_window_message({"reins": "resume-pass", "id": "def"}))
+    assert sent[-1] == {"reins": "resume-pass-for", "id": "def", "pass": ""}
+
+
+def test_the_page_and_the_chat_use_the_same_names_for_the_pass():
+    js = (ROOT / "public" / "reins-chat.js").read_text(encoding="utf-8")
+    app = _chat_app()
+    assert f'const PASS_COOKIE = "{app.PASS_COOKIE}";' in js
+    assert 'reins: "resume-pass", id' in js and 'd.reins !== "resume-pass-for"' in js
+    assert "max-age=60;" in js and app.PASS_SECONDS == 60

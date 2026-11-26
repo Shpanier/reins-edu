@@ -120,6 +120,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+class NoFramingByOtherSites:
+    """No other site may show these pages inside a frame: a page that framed
+    the student chat could ask it, by a window message, for the pass that keeps
+    a student signed in across the language switch (student_app/app.py,
+    on_window_message), and clicks on the dashboard could be tricked.
+    (Plain ASGI, so streamed answers and the chat's socket pass untouched.)"""
+
+    HEADERS = [(b"content-security-policy", b"frame-ancestors 'self'"), (b"x-frame-options", b"SAMEORIGIN")]
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+
+        async def send_with_headers(message):
+            if message["type"] == "http.response.start":
+                have = {k.lower() for k, _ in message.get("headers", [])}
+                extra = [(k, v) for k, v in self.HEADERS if k not in have]
+                message = {**message, "headers": [*message.get("headers", []), *extra]}
+            await send(message)
+
+        await self.app(scope, receive, send_with_headers)
+
+
+app.add_middleware(NoFramingByOtherSites)
+
 app.include_router(login.router, prefix="/api")
 app.include_router(signin_routes.router, prefix="/api")
 app.include_router(sessions.router, prefix="/api")
