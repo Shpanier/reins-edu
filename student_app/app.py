@@ -3,7 +3,9 @@ import datetime
 import logging
 import os
 import re
+import secrets
 import sys
+import time
 import uuid
 import warnings
 from http.cookies import CookieError, SimpleCookie
@@ -40,10 +42,8 @@ _HEBREW = re.compile(r"[֐-׿]")
 LANG_COOKIE = "reins_lang"
 
 
-def _picked_lang() -> str:
-    """The language the student chose with the English/Hebrew switch in the
-    chat's top bar (public/reins-chat.js keeps it in the LANG_COOKIE cookie,
-    which comes with the chat's connection), or "" when they haven't."""
+def _cookie(name: str) -> str:
+    """A cookie that came with the chat's connection, or ""."""
     try:
         raw = (cl.context.session.environ or {}).get("HTTP_COOKIE", "")
     except Exception:  # no chat session yet
@@ -53,8 +53,47 @@ def _picked_lang() -> str:
         jar.load(raw)
     except CookieError:
         return ""
-    picked = jar[LANG_COOKIE].value if LANG_COOKIE in jar else ""
+    return jar[name].value if name in jar else ""
+
+
+def _picked_lang() -> str:
+    """The language the student chose with the English/Hebrew switch in the
+    chat's top bar (public/reins-chat.js keeps it in the LANG_COOKIE cookie,
+    which comes with the chat's connection), or "" when they haven't."""
+    picked = _cookie(LANG_COOKIE)
     return picked if picked in ("he", "en") else ""
+
+
+# The language switch reloads the page: Chainlit's own labels only change on a
+# load. Signed in by the chat itself (no sign-in page), the sign-in lives in
+# this page's chat session alone, so before the reload the page asks for a
+# pass (on_window_message): good once, for PASS_SECONDS, kept in this process.
+# The new page brings it back in the PASS_COOKIE cookie, and the chat carries on
+# in the same lab, signed in (on_chat_start). The pass names the sign-in and
+# the lab; it is not the sign-in itself.
+PASS_COOKIE = "reins_resume"
+PASS_SECONDS = 60
+_passes: dict[str, dict] = {}
+
+
+def _issue_pass(keep: dict) -> str:
+    """A one-time pass for `keep` ({"login", "course_id", "exercise_id"})."""
+    now = time.monotonic()
+    for old in [k for k, v in _passes.items() if v["until"] < now]:
+        _passes.pop(old, None)
+    ticket = secrets.token_urlsafe(24)
+    _passes[ticket] = {"keep": keep, "until": now + PASS_SECONDS}
+    return ticket
+
+
+def _take_pass():
+    """What the pass in the PASS_COOKIE cookie stands for, or None. A pass
+    works once."""
+    ticket = _cookie(PASS_COOKIE)
+    held = _passes.pop(ticket, None) if ticket else None
+    if not held or held["until"] < time.monotonic():
+        return None
+    return held["keep"]
 
 
 def _lang() -> str:
@@ -584,7 +623,12 @@ async def on_chat_start():
     """Log in (login page or chat), choose a course and exercise when there is a
     choice, then show the briefing (and, in a class-paced lab, the open step)."""
     user = cl.user_session.get("user")
-    login = (user.metadata or {}).get("login") if (AUTH_PAGE and user) else await _chat_login()
+    # Back from the language switch's reload: the same sign-in and lab.
+    back = None if AUTH_PAGE else _take_pass()
+    if AUTH_PAGE and user:
+        login = (user.metadata or {}).get("login")
+    else:
+        login = back["login"] if back else await _chat_login()
     if not login:
         return
     token = login["token"]
@@ -599,6 +643,8 @@ async def on_chat_start():
     courses = fresh["courses"] if fresh else login.get("courses") or []
     if profile and "/" in profile:
         course_id, exercise_id = profile.split("/", 1)
+    elif back:
+        course_id, exercise_id = back["course_id"], back["exercise_id"]
     else:
         choice = await _choose(courses)
         if choice is False:
@@ -642,6 +688,8 @@ async def on_chat_start():
     cl.user_session.set("variant", sess["variant"])
     cl.user_session.set("mode", sess["mode"])
     cl.user_session.set("paced", paced)
+    # What a pass for the language switch's reload stands for (on_window_message).
+    cl.user_session.set("keep", {"login": login, "course_id": course_id, "exercise_id": exercise_id})
     # One thing at a time: the poller and the "done" button both ask questions.
     cl.user_session.set("lock", asyncio.Lock())
     await _offer_my_work()
@@ -680,6 +728,20 @@ async def on_chat_end():
     # So the poller only pauses until the browser is back, and stops when
     # Chainlit drops the session (_poll).
     cl.user_session.set("dead_socket", cl.context.session.socket_id)
+
+
+@cl.on_window_message
+async def on_window_message(data):
+    """The language switch asks for a pass before it reloads the page
+    (public/reins-chat.js, keepSignin; _issue_pass). Chainlit hands over every
+    message the page's window gets, its own replies too: only that request
+    counts. The answer is "" when there is nothing to keep: not signed in yet,
+    or signed in on the sign-in page, which a reload keeps anyway."""
+    if not isinstance(data, dict) or data.get("reins") != "resume-pass":
+        return
+    keep = None if AUTH_PAGE else cl.user_session.get("keep")
+    ticket = _issue_pass(keep) if keep else ""
+    await cl.send_window_message({"reins": "resume-pass-for", "id": data.get("id"), "pass": ticket})
 
 
 def _format_param_value(value) -> str:

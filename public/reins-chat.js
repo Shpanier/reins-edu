@@ -353,13 +353,46 @@
     before.insertAdjacentElement("beforebegin", collegeLink("reins-college--header"));
   };
 
+  // Before the language switch reloads the page: a student the chat signed in
+  // itself (no sign-in page) would have to sign in again, since that sign-in
+  // lives in this page's chat session. So the page asks the chat for a pass
+  // (a window message, which Chainlit hands to the chat's server:
+  // student_app/app.py, on_window_message) and keeps it in a cookie for the
+  // next page, where the chat carries on in the same lab. No answer in time,
+  // or an empty one (not signed in yet, or signed in on the sign-in page, which
+  // a reload keeps), and the page just reloads.
+  const PASS_COOKIE = "reins_resume";
+  const keepSignin = () => new Promise((done) => {
+    if (window.top !== window) { done(); return; }
+    const id = Math.random().toString(36).slice(2);
+    let timer = null;
+    const onReply = (e) => {
+      // Chainlit posts the chat's answer to this same window.
+      if (e.source !== window || e.origin !== location.origin) return;
+      const d = e.data;
+      if (!d || d.reins !== "resume-pass-for" || d.id !== id) return;
+      finish(d.pass);
+    };
+    const finish = (pass) => {
+      clearTimeout(timer);
+      window.removeEventListener("message", onReply);
+      if (pass && /^[\w-]+$/.test(pass)) {
+        document.cookie = `${PASS_COOKIE}=${pass}; path=/; max-age=60; SameSite=Strict`;
+      }
+      done();
+    };
+    timer = setTimeout(() => finish(""), 2500);
+    window.addEventListener("message", onReply);
+    window.postMessage({ reins: "resume-pass", id }, location.origin);
+  });
+
   // The switch between English and Hebrew: in the chat's top bar beside the
   // light/dark button, and in a corner of the sign-in page. A click keeps the
   // choice and reloads the page, so that Chainlit's labels change with the
-  // chat's own lines. (Signed in on the chat's own sign-in page, the student
-  // stays signed in and the lab continues where it was; signing in inside the
-  // chat starts over.) Hidden when the lecturer fixed the chat's language.
+  // chat's own lines; the student stays signed in and the lab continues where
+  // it was (keepSignin). Hidden when the lecturer fixed the chat's language.
   const LANG_NAMES = { en: ["EN", "English"], he: ["עב", "עברית"] };
+  let switching = false; // a second click while the page asks for its pass does nothing
   const addLangSwitch = () => {
     if (langSetting === null) {
       langSetting = "auto";
@@ -386,9 +419,10 @@
         type: "button", lang, dir: lang === "he" ? "rtl" : "ltr", title: name, "aria-label": name,
         "aria-pressed": String(lang === now), text: short,
         onclick: () => {
-          if (lang === picked) return;
+          if (lang === picked || switching) return;
+          switching = true;
           savePicked(lang);
-          location.reload();
+          keepSignin().then(() => location.reload());
         },
       }));
     });
