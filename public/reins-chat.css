@@ -79,3 +79,77 @@ div.bg-accent.rounded-3xl:has(.message-content) .prose :not(pre) > code { backgr
 /* What REINS stands for, under the sign-in heading (added by reins-chat.js). */
 .reins-acronym { margin: 0; font-size: 15px; line-height: 1.4; color: hsl(var(--muted-foreground)); }
 .reins-acronym b { font-weight: 800; color: hsl(var(--primary)); }
+
+/* The sign-in page: Google and a code by email (reins-chat.js, addSignin). */
+.reins-signin { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.reins-signin__or {
+  display: flex; align-items: center; gap: 12px; margin: 6px 0 2px;
+  color: hsl(var(--muted-foreground)); font-size: 14px;
+}
+.reins-signin__or::before, .reins-signin__or::after { content: ""; flex: 1; border-top: 1px solid hsl(var(--border)); }
+.reins-signin__btn, .reins-signin__primary {
+  display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+  min-height: 40px; padding: 0 14px; border-radius: calc(var(--radius) - 2px);
+  font: inherit; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer;
+}
+.reins-signin__btn {
+  border: 1px solid hsl(var(--input)); background: hsl(var(--card)); color: hsl(var(--foreground));
+}
+.reins-signin__btn:hover { background: hsl(var(--accent)); }
+.reins-signin__btn svg { width: 18px; height: 18px; flex: none; }
+.reins-signin__primary {
+  border: 1px solid hsl(var(--primary)); background: hsl(var(--primary)); color: hsl(var(--primary-foreground));
+}
+.reins-signin__primary:hover { filter: brightness(1.08); }
+.reins-signin__btn:disabled, .reins-signin__primary:disabled { opacity: .55; cursor: default; }
+.reins-signin__panel { display: flex; flex-direction: column; gap: 12px; }
+.reins-signin__panel label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; }
+.reins-signin__panel input {
+  height: 40px; padding: 0 12px; border: 1px solid hsl(var(--input)); border-radius: calc(var(--radius) - 2px);
+  background: hsl(var(--background)); color: hsl(var(--foreground)); font: inherit; font-size: 16px;
+}
+.reins-signin__panel input[name="code"] { font-size: 22px; letter-spacing: 6px; text-align: center; }
+.reins-signin__panel input:focus { outline: 2px solid hsl(var(--ring)); outline-offset: 1px; }
+.reins-signin__msg { margin: 0; padding: 10px 12px; border-radius: calc(var(--radius) - 2px);
+  background: hsl(var(--secondary)); color: hsl(var(--secondary-foreground)); font-size: 14px; line-height: 1.45; }
+.reins-signin__msg.is-error { background: hsl(var(--destructive) / .1); color: hsl(var(--destructive)); }
+.reins-signin__hint { margin: -6px 0 0; color: hsl(var(--muted-foreground)); font-size: 13px; }
+.reins-signin__row { display: flex; justify-content: space-between; gap: 8px; }
+.reins-signin__link {
+  align-self: flex-start; padding: 0; border: 0; background: none; color: hsl(var(--primary));
+  font: inherit; font-size: 14px; cursor: pointer; text-decoration: underline;
+}
+
+/* The college's logo: an email link to REINS Edu's author (reins-chat.js, addCollege). */
+.reins-college { display: flex; width: fit-content; line-height: 0; border-radius: 6px; }
+.reins-college img { width: auto; height: 48px; padding: 3px 6px; border-radius: 6px; background: #fff; transition: box-shadow .15s; }
+.reins-college:hover img, .reins-college:focus-visible img { box-shadow: 0 0 0 2px hsl(var(--primary)); }
+.reins-college:focus-visible { outline: none; }
+.reins-college--login { align-self: center; margin-top: -4px; }
+.reins-college--login img { height: 40px; }
+@media (min-width: 768px) { .reins-college--login { align-self: flex-start; } }
+.reins-college--header { margin-inline: 4px 8px; }
+.reins-college--header img { height: 32px; padding: 2px 5px; }
+.reins-college--header:hover img, .reins-college--header:focus-visible img { box-shadow: 0 0 0 2px #f2b705; }
+
+/* The switch between English and Hebrew (reins-chat.js, addLangSwitch): two
+   small buttons, the language in use filled. */
+.reins-lang { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border-radius: 8px; flex: none; }
+.reins-lang button {
+  min-width: 34px; height: 28px; padding: 0 8px; border: 0; border-radius: 6px; background: none;
+  font: inherit; font-size: 14px; font-weight: 700; line-height: 1; cursor: pointer;
+}
+.reins-lang button:focus-visible { outline: 2px solid #f2b705; outline-offset: 1px; }
+.reins-lang--header { margin-inline: 4px; border: 1px solid #4a535c; }
+#header .reins-lang button[aria-pressed="true"],
+#header .reins-lang button[aria-pressed="true"]:hover { background: #eef0f2; color: #1d2227; cursor: default; }
+.reins-lang--login {
+  position: fixed; top: 14px; inset-inline-end: 14px; z-index: 60;
+  border: 1px solid hsl(var(--border)); background: hsl(var(--card));
+}
+.reins-lang--login button { color: hsl(var(--foreground)); }
+.reins-lang--login button:hover { background: hsl(var(--accent)); }
+.reins-lang--login button[aria-pressed="true"],
+.reins-lang--login button[aria-pressed="true"]:hover {
+  background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); cursor: default;
+}

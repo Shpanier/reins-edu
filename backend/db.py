@@ -29,6 +29,19 @@ CREATE TABLE IF NOT EXISTS auth_tokens (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+-- One-time sign-in codes sent by email (backend/signin.py). Only a hash of the
+-- code is kept; times are Unix seconds.
+CREATE TABLE IF NOT EXISTS signin_codes (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL,
+    code_hash   TEXT NOT NULL,
+    created_at  REAL NOT NULL,
+    expires_at  REAL NOT NULL,
+    tries       INTEGER NOT NULL DEFAULT 0,
+    used        INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 CREATE TABLE IF NOT EXISTS sessions (
     id              TEXT PRIMARY KEY,
     user_id         INTEGER NOT NULL,

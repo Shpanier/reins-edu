@@ -17,6 +17,7 @@ import { coursesStrings } from "./i18n/courses";
 import { exercisesStrings } from "./i18n/exercises";
 import { studentsStrings } from "./i18n/students";
 import { notifyStrings } from "./i18n/notify";
+import { signinStrings } from "./i18n/signin";
 
 const STRINGS = {
   en: {
@@ -1088,7 +1089,7 @@ const STRINGS = {
 // Every string: the original table above plus one file per area (src/i18n/).
 // New strings go in the area files; a key there replaces one of the same name above.
 const AREAS = [shellStrings, reviewStrings, pacingStrings, coursesStrings, exercisesStrings, studentsStrings,
-  notifyStrings];
+  notifyStrings, signinStrings];
 const ALL: Record<Lang, Record<string, string>> = {
   en: Object.assign({}, STRINGS.en, ...AREAS.map((a) => a.en)),
   he: Object.assign({}, STRINGS.he, ...AREAS.map((a) => a.he)),
@@ -1102,7 +1103,8 @@ export type StringKey =
   | keyof typeof coursesStrings.en
   | keyof typeof exercisesStrings.en
   | keyof typeof studentsStrings.en
-  | keyof typeof notifyStrings.en;
+  | keyof typeof notifyStrings.en
+  | keyof typeof signinStrings.en;
 type Vars = Record<string, string | number>;
 /** The translate function, for passing to helpers and child components. */
 export type Translate = (key: StringKey, vars?: Vars) => string;

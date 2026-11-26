@@ -6,6 +6,7 @@ import { connection } from "../lib/connection";
 import { Button } from "../components/ui";
 import { Acronym, Brand } from "./FirstRun";
 import { textDir } from "../lib/textDir";
+import { CollegeLink } from "./CollegeLink";
 
 export type Tab = "monitor" | "exercises" | "courses";
 
@@ -100,6 +101,7 @@ export function Rail({ tab, onTab, settings, plugin, bell, waiting, onShare, onS
     <aside className="vc-rail">
       <div className="vc-rail__brand">
         <Brand />
+        <CollegeLink className="vc-rail__college" />
         <Acronym />
       </div>
       <nav className="vc-nav" aria-label="REINS Edu">

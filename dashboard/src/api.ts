@@ -137,6 +137,45 @@ export async function login(code: string, password: string): Promise<LoginResult
   return r.json() as Promise<LoginResult>;
 }
 
+// --- signing in with an email code or Google (backend/routes/signin.py) -------------
+// Standalone too: 401 means a wrong code or an old ticket, not an expired session.
+
+export interface LoginMethods { password: boolean; email: boolean; google: boolean; chat_page: boolean }
+
+async function postLogin<T>(path: string, body: unknown): Promise<T> {
+  let r: Response;
+  try {
+    r = await fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new ApiError("The server can't be reached.", 0, true);
+  }
+  if (r.status === 401) throw new Error("bad-code");
+  if (r.status === 429) throw new Error("too-many");
+  if (!r.ok) throw new ApiError((await readErrorDetail(r)) || `${r.status} ${r.statusText}`, r.status);
+  return r.json() as Promise<T>;
+}
+
+export async function loginMethods(): Promise<LoginMethods> {
+  try {
+    const r = await fetch("/api/login/methods");
+    if (r.ok) return (await r.json()) as LoginMethods;
+  } catch {
+    // An older server: passwords only.
+  }
+  return { password: true, email: false, google: false, chat_page: false };
+}
+
+export const requestEmailCode = (email: string, lang: Lang) =>
+  postLogin<{ sent: boolean; minutes: number }>("/api/login/email", { email, lang, to: "dashboard" });
+export const verifyEmailCode = (email: string, code: string) =>
+  postLogin<LoginResult>("/api/login/email/verify", { email, code, to: "dashboard" });
+export const tradeSigninTicket = (ticket: string) => postLogin<LoginResult>("/api/login/ticket", { ticket });
+export const googleSigninUrl = () => "/api/login/google?to=dashboard";
+
 // --- first run, settings, the students' link (backend/routes/setup.py) -------------
 
 export interface SetupStatus { needs_teacher: boolean; local: boolean; version: string }
@@ -163,6 +202,24 @@ export interface Settings {
   /** Show the IDE plugin's screens (exam monitoring, terminal log, submissions). */
   plugin_ui: boolean;
   paths: { env_file: string; data_dir: string; database: string };
+}
+export interface SigninSettings {
+  email: {
+    on: boolean; ready: boolean; switch: boolean;
+    host: string; port: number; user: string; sender: string;
+    security: "starttls" | "ssl" | "none"; password_set: boolean;
+  };
+  google: { on: boolean; ready: boolean; switch: boolean; client_id: string; secret_set: boolean; callback_urls: string[] };
+  my_email: string;
+  students: { total: number; with_email: number };
+  chat_page: boolean;
+  restart_needed: boolean;
+}
+export interface SigninSave {
+  email_on?: boolean;
+  smtp_host?: string; smtp_port?: number; smtp_user?: string; smtp_password?: string;
+  smtp_from?: string; smtp_security?: "starttls" | "ssl" | "none";
+  google_on?: boolean; google_client_id?: string; google_client_secret?: string;
 }
 export interface TunnelState {
   state: "off" | "starting" | "on" | "stopping" | "error";
@@ -490,6 +547,15 @@ export const api = {
     j<{ chat_language: ChatLanguage }>("/api/settings/chat-language", {
       method: "POST", body: JSON.stringify({ language }),
     }),
+  signinSettings: () => j<SigninSettings>("/api/settings/signin"),
+  saveSignin: (s: SigninSave) =>
+    j<SigninSettings>("/api/settings/signin", { method: "POST", body: JSON.stringify(s) }),
+  testEmail: (lang: Lang) =>
+    j<{ ok: boolean; message: string; to?: string }>("/api/settings/signin/test", {
+      method: "POST", body: JSON.stringify({ lang }),
+    }),
+  saveMyEmail: (email: string) =>
+    j<{ my_email: string }>("/api/settings/my-email", { method: "POST", body: JSON.stringify({ email }) }),
   share: () => j<ShareInfo>("/api/share"),
   tunnel: (action: "start" | "stop" | "download", provider?: "cloudflared" | "ngrok") =>
     j<ShareInfo>("/api/share/tunnel", { method: "POST", body: JSON.stringify({ action, provider }) }),

@@ -257,6 +257,8 @@ Everything here is in the dashboard's **Courses & students** tab.
   or reset passwords in the *Passwords* table, or from a terminal:
   `uv run python scripts/set_password.py <username>` (`--reset` goes back to the
   username).
+  Students with an email address can also sign in with a code by email or with
+  Google ([Signing in without a password](#signing-in-without-a-password)).
 - **Courses.** A course offers some exercises (one of them the default) to some
   students. In the student chat, the menu at the top of the page lists every
   exercise the student's courses offer now (read again on every page load, so
@@ -433,6 +435,25 @@ Nothing in a browser can stop a student from opening another AI site: "only this
 chat" is a class rule. Copilot can be turned off in a template repository's
 `.devcontainer/devcontainer.json`.
 
+### My work: the student's copy
+
+At the end of the lesson a student can download their work and keep it: one
+HTML page that opens in any browser and prints (Hebrew right to left), with the
+lab's title, the course, the dates, the steps done and not done, and then
+everything their chat showed and everything they wrote, in order: the brief,
+each step, the outputs they pasted, the tutor's answers, the quiz questions and
+their answers, your notes. Only what the student saw or wrote: nothing about
+other students, and no grade or note their chat didn't show them.
+
+The chat offers it with the note that the lab is done (*📥 Download my work*),
+and at any time with the *My work* button under the message box, so a student
+who didn't finish before the end of the lesson can take their work too. An
+exercise that keeps no chat history (`chat_history: false`) gets what the
+server keeps instead: the outputs per step, the quiz answers and the questions
+to the tutor. The API is `GET /api/my-work/{session_id}` (`?lang=he|en` for
+the page's own words; default the lab's language): the session's own student,
+or a teacher.
+
 ## Sharing with students
 
 Students open one link: the chat at `/chat/` on your REINS Edu. **Share with
@@ -452,6 +473,51 @@ they were (their conversation is replayed).
 Nothing in a browser can stop a student from opening another AI site: "only
 this chat" is a class rule.
 
+## Signing in without a password
+
+Besides the username and password, students (and you) can sign in with a
+**6-digit code sent by email**, or with their **Google account**. Both find the
+account by the email address on it, so nobody can open a new account this
+way: a student's address comes from the class list (import the Moodle
+participants file, or *Add a student*), yours from *Settings*. *Settings →
+Signing in without a password* says how many students have an address; to add
+the missing ones, import the class list again (students already there keep
+their accounts and get the address).
+
+Turn each one on in that section of *Settings*:
+
+- **A code by email** needs an outgoing mail server. With Gmail: server
+  `smtp.gmail.com`, port 587 (STARTTLS), your full Gmail address as the
+  username, and an **app password** as the password (Google account →
+  Security → 2-Step Verification must be on → App passwords). *Send me a test
+  email* checks it. A code works once, for 10 minutes; five wrong codes close
+  it, and an address gets at most six codes an hour. The answer to "send me a
+  code" is the same whether or not the address is on an account.
+- **Google** needs an OAuth client from Google Cloud Console: *APIs & Services
+  → Credentials → Create credentials → OAuth client ID → Web application*.
+  Under *Authorized redirect URIs* add the addresses *Settings* lists:
+  `http://localhost:8010/api/login/google/callback` for this computer, and
+  `https://<your public address>/api/login/google/callback` for students (with
+  a fixed ngrok domain, that address never changes; the quick Cloudflare link
+  changes every class, so use ngrok or your own address for Google). Paste the
+  client ID and secret into *Settings*. On the *OAuth consent screen*, set the
+  app to *In production* so any Google account can try (in *Testing*, only the
+  test users you list can). It asks only for the name and email address. A Google account
+  whose address is on no account is told so and can sign in with the password.
+- **The student chat** shows the two buttons on its sign-in page. A server set
+  up before the chat had a sign-in page asks for the username inside the
+  conversation instead: turning either method on gives it one, after you
+  restart REINS Edu (*Settings* says so). In the conversation, a student can
+  also type an email address where the chat asks for the username, and then
+  the code.
+- **Your own sign-in** to the dashboard works the same way, with the address
+  you set in *Settings*. A lecturer's account still signs in only on your
+  computer (`TEACHER_LOCAL_ONLY`).
+- The IDE plugin still signs in with the username and password.
+
+The mail server's password and the Google client secret are kept in `.env`
+like the API key; the dashboard never shows them again.
+
 ## Privacy
 
 REINS Edu is used with students, so it keeps as little as possible outside the
@@ -468,8 +534,11 @@ lecturer's computer.
   agents that draft answers for you, suggest questions and grade:
   `backend/sanitize.py` replaces students' names, ID numbers, emails and phone
   numbers. The tutor's direct answers get the student's messages as typed.
-- **No outside accounts.** Usernames are made by REINS Edu; there is no single
-  sign-on, and an email address is kept only if your CSV has one.
+- **Outside accounts only if you turn them on.** Usernames are made by
+  REINS Edu, and an email address is kept only if your CSV has one. With
+  sign-in by email, the codes go through the mail server you set; with Google
+  sign-in, Google learns that the student signed in to your server, and
+  REINS Edu receives only the verified email address (and keeps nothing new).
 - **The API key** is in `.env` on your computer, readable only by your user
   account. The dashboard never shows it again after it is saved.
 - **Teacher-only content** (expected answers, output checks, model answers to

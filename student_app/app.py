@@ -6,6 +6,7 @@ import re
 import sys
 import uuid
 import warnings
+from http.cookies import CookieError, SimpleCookie
 
 import chainlit as cl
 import httpx
@@ -35,24 +36,48 @@ AUTH_PAGE = bool(os.environ.get("CHAINLIT_AUTH_SECRET", "").strip())
 
 _HEBREW = re.compile(r"[֐-׿]")
 
+# The cookie that holds the student's choice of language (public/reins-chat.js).
+LANG_COOKIE = "reins_lang"
+
+
+def _picked_lang() -> str:
+    """The language the student chose with the English/Hebrew switch in the
+    chat's top bar (public/reins-chat.js keeps it in the LANG_COOKIE cookie,
+    which comes with the chat's connection), or "" when they haven't."""
+    try:
+        raw = (cl.context.session.environ or {}).get("HTTP_COOKIE", "")
+    except Exception:  # no chat session yet
+        return ""
+    jar = SimpleCookie()
+    try:
+        jar.load(raw)
+    except CookieError:
+        return ""
+    picked = jar[LANG_COOKIE].value if LANG_COOKIE in jar else ""
+    return picked if picked in ("he", "en") else ""
+
 
 def _lang() -> str:
     """The language of the chat's own lines for this student: "he" or "en"
     (student_app/chat_texts.py). The lecturer's setting CHAT_LANGUAGE=he|en
-    fixes it. On "auto" it is the lab's language once a lab is open
-    (_follow_lab), and the browser's language before that (signing in,
-    choosing a course)."""
+    fixes it. On "auto" it is the student's own choice (_picked_lang), then
+    the lab's language once a lab is open (_follow_lab), and before that
+    (signing in, choosing a course) the browser's language: its first one,
+    which Chainlit's own labels follow too."""
     forced = os.environ.get("CHAT_LANGUAGE", "auto").strip().lower()
     if forced in ("he", "en"):
         return forced
+    picked = _picked_lang()
+    if picked:
+        return picked
     try:
         chosen = cl.user_session.get("lang")
-        browser = cl.user_session.get("languages") or ""
+        browser = cl.context.session.language or ""
     except Exception:  # no chat session yet
         return "en"
     if chosen:
         return chosen
-    return "he" if re.search(r"(?:^|[\s,;])he\b", browser, re.I) else "en"
+    return "he" if browser.lower().startswith("he") else "en"
 
 
 def _follow_lab(exercise: dict) -> None:
@@ -176,6 +201,8 @@ if AUTH_PAGE:
         data = await _my_exercises(login["token"]) if login.get("token") else None
         if not data:
             return None
+        # `language` is the browser's, or the student's choice of language
+        # (public/reins-chat.js hands Chainlit that one).
         forced = os.environ.get("CHAT_LANGUAGE", "auto").strip().lower()
         lang = forced if forced in ("he", "en") else ("he" if (language or "").lower().startswith("he") else "en")
         return _menu(data, lang) or None
@@ -405,10 +432,14 @@ async def _chat_login():
         await cl.Message(content=f"🛠️ Dev mode: auto-login with `{dev_code}`.").send()
         code, password = dev_code, dev_code  # the default password is the code
     else:
-        code = (await _prompt(_t("ask_username"))).upper()
+        by_email = await _email_signin_on()
+        code = (await _prompt(_t("ask_username_email" if by_email else "ask_username"))).strip()
         if not code:
             await cl.Message(content=_t("no_username")).send()
             return None
+        if by_email and "@" in code:
+            return await _chat_email_login(code)
+        code = code.upper()
         password = await _prompt(_t("ask_password"))
         if not password:
             await cl.Message(content=_t("no_password")).send()
@@ -426,7 +457,54 @@ async def _chat_login():
     return r.json()
 
 
-# What _pick returns when the teacher's change (a reset, a withdrawn question)
+async def _api_post(path: str, body: dict):
+    """POST to this server's API; None when it can't be reached."""
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            return await client.post(f"{BACKEND}{path}", json=body)
+    except httpx.HTTPError as e:
+        log.warning("%s failed: %s", path, e)
+        return None
+
+
+async def _email_signin_on() -> bool:
+    """Does the lecturer let students sign in with a code sent by email?"""
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            r = await client.get(f"{BACKEND}/api/login/methods")
+        return r.status_code == 200 and bool(r.json().get("email"))
+    except (httpx.HTTPError, ValueError):
+        return False
+
+
+async def _chat_email_login(addr: str):
+    """Sign in with a code sent to this address (the chat without its sign-in
+    page). The login response, or None."""
+    r = await _api_post("/api/login/email", {"email": addr, "to": "chat", "lang": _lang()})
+    if r is None:
+        await cl.Message(content=_t("no_server")).send()
+        return None
+    if r.status_code != 200:
+        key = {422: "bad_email", 429: "too_many_codes"}.get(r.status_code, "login_failed")
+        await cl.Message(content=_t(key)).send()
+        return None
+    for attempt in range(3):
+        code = await _prompt(_t("ask_email_code", email=addr) if attempt == 0 else _t("wrong_email_code"))
+        if not code:
+            break
+        v = await _api_post("/api/login/email/verify", {"email": addr, "code": code, "to": "chat"})
+        if v is None:
+            await cl.Message(content=_t("no_server")).send()
+            return None
+        if v.status_code == 200:
+            return v.json()
+        if v.status_code != 401:
+            break
+    await cl.Message(content=_t("email_code_failed")).send()
+    return None
+
+
+# What _pick returns when the teacher's change# What _pick returns when the teacher's change (a reset, a withdrawn question)
 # or a reconnect made the question void (_interrupt_pick).
 _INTERRUPTED = "__interrupted__"
 
@@ -566,6 +644,7 @@ async def on_chat_start():
     cl.user_session.set("paced", paced)
     # One thing at a time: the poller and the "done" button both ask questions.
     cl.user_session.set("lock", asyncio.Lock())
+    await _offer_my_work()
 
     async with cl.user_session.get("lock"):
         history = await _replay()
@@ -685,8 +764,63 @@ async def on_suggest(action: cl.Action):
     await _ask(action.payload["value"])
 
 
+# --- my work: the student's own copy of the lab (backend/my_work.py) --------------------
+# One HTML page with the lab, how far they got and the whole conversation. Offered
+# with the note that the lab is done, and at any time by the "My work" button under
+# the message box (a Chainlit command; public/reins-chat.js sends it on one click).
+
+_MY_WORK = {_text("cmd_my_work", "he"), _text("cmd_my_work", "en")}
+
+
+def _my_work_button() -> cl.Action:
+    return cl.Action(name="my_work", payload={}, label=_t("btn_my_work"))
+
+
+@cl.action_callback("my_work")
+async def on_my_work(action: cl.Action):
+    await _send_my_work()
+
+
+async def _offer_my_work() -> None:
+    """The "My work" button under the message box, once a lab is open."""
+    try:
+        await cl.context.emitter.set_commands([{
+            "id": _t("cmd_my_work"), "icon": "download", "description": _t("cmd_my_work_tip"),
+            "button": True, "persistent": False}])
+    except Exception as e:  # an older Chainlit: the button at the end of the lab still works
+        log.warning("my-work command: %s", e)
+
+
+async def _send_my_work() -> None:
+    """GET /api/my-work/<session> and hand the page over as a file to save."""
+    sid = cl.user_session.get("session_id")
+    if not sid:
+        await cl.Message(content=_t("my_work_none")).send()
+        return
+    r = None
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(f"{BACKEND}/api/my-work/{sid}", headers=_auth(), params={"lang": _lang()})
+    except httpx.HTTPError as e:
+        log.warning("my work failed: %s", e)
+    if r is None or r.status_code != 200:
+        if r is not None:
+            log.warning("my work: HTTP %s %s", r.status_code, r.text[:200])
+        await cl.Message(content=_t("my_work_failed")).send()
+        return
+    found = re.search(r'filename="([^"]+)"', r.headers.get("content-disposition", ""))
+    name = found.group(1) if found else "my-work.html"
+    await cl.Message(content=_t("my_work_ready"), elements=[
+        cl.File(name=name, content=r.content, mime="text/html", display="inline")]).send()
+
+
 @cl.on_message
 async def on_message(msg: cl.Message):
+    if getattr(msg, "command", None) in _MY_WORK:
+        # The "My work" button: the file, not a message for the tutor.
+        await _send_my_work()
+        if not (msg.content or "").strip():
+            return
     awaiting = cl.user_session.get("awaiting_output") if cl.user_session.get("paced") else None
     if awaiting is not None:
         # Asked for after "Done": this message is the step's output.
@@ -890,7 +1024,8 @@ async def _show_state():
             await _say(text, kind="note", step=st["current"])
     elif st["finished"] and not cl.user_session.get("finished_note"):
         cl.user_session.set("finished_note", True)
-        await _say(_t("lab_done"), kind="note", step=st["total"] + 1)
+        await _say(f"{_t('lab_done')}\n\n{_t('my_work_offer')}", kind="note", step=st["total"] + 1,
+                   actions=[_my_work_button()])
 
 
 async def _send_step(step: dict, unlocked: bool):
@@ -1006,7 +1141,7 @@ async def _not_this_step(st: dict, n: int):
         text = _t("not_open_yet", label=st["current_label"])
     else:
         text = _t("already_done", label=label, current=st.get("current_label"))
-    await _say(text)
+    await _say(text, actions=[_my_work_button()] if st.get("finished") else None)
 
 
 async def _poll(session_id: str, token: str):

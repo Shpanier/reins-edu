@@ -136,7 +136,8 @@ written directly in the dashboard (*Exercises → New exercise*).
 ## More
 
 - [Lecturer's guide](docs/GUIDE.md): review mode, class pacing, questions to
-  students, the question bank, courses and meetings, privacy.
+  students, the question bank, courses and meetings, signing in with an email
+  code or Google, privacy.
 - [Writing exercises](examples/README.md): the package format.
 - [Development](docs/DEVELOPMENT.md): running from source, tests, the
   dashboard's design system, the MCP tools for writing exercises with a coding

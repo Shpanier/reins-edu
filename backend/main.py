@@ -28,6 +28,7 @@ from backend.routes import (
     grade,
     login,
     mode,
+    my_work as my_work_routes,
     notifications as notification_routes,
     pacing as pacing_routes,
     plugin,
@@ -36,6 +37,7 @@ from backend.routes import (
     review,
     sessions,
     setup as setup_routes,
+    signin as signin_routes,
     steps as step_routes,
     students,
     submissions,
@@ -119,6 +121,7 @@ app.add_middleware(
 )
 
 app.include_router(login.router, prefix="/api")
+app.include_router(signin_routes.router, prefix="/api")
 app.include_router(sessions.router, prefix="/api")
 app.include_router(ex_routes.router, prefix="/api")
 app.include_router(ask.router, prefix="/api")
@@ -135,6 +138,7 @@ app.include_router(files.router, prefix="/api")
 app.include_router(step_routes.router, prefix="/api")
 app.include_router(pacing_routes.router, prefix="/api")
 app.include_router(transcript_routes.router, prefix="/api")
+app.include_router(my_work_routes.router, prefix="/api")
 app.include_router(terminal_routes.router, prefix="/api")
 app.include_router(trace_routes.router, prefix="/api")
 app.include_router(course_routes.router, prefix="/api")

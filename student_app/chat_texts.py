@@ -13,6 +13,20 @@ TEXTS: dict[str, tuple[str, str]] = {
     # --- signing in (only when the chat asks; the sign-in page has its own labels) ---
     "ask_username": ("🎓 ברוכים הבאים ל־REINS Edu. הקלידו את שם המשתמש שלכם.",
                      "🎓 Welcome to REINS Edu. Type your username."),
+    "ask_username_email": ("🎓 ברוכים הבאים ל־REINS Edu. הקלידו את שם המשתמש שלכם, או את כתובת המייל כדי לקבל קוד כניסה.",
+                           "🎓 Welcome to REINS Edu. Type your username, or your email address to get a sign-in code."),
+    "ask_email_code": ("📧 אם הכתובת {email} רשומה אצל המרצה, שלחנו אליה קוד בן 6 ספרות. הקלידו אותו כאן. "
+                       "לא הגיע תוך דקה? כדאי לבדוק בתיקיית הספאם.",
+                       "📧 If {email} is on your lecturer's list, a 6-digit code is on its way to it. Type it here. "
+                       "Nothing after a minute? Look in your spam folder."),
+    "wrong_email_code": ("❌ הקוד שגוי או שפג תוקפו. נסו שוב.", "❌ Wrong or expired code. Try again."),
+    "email_code_failed": ("❌ הכניסה עם הקוד לא הצליחה. רעננו את הדף כדי לבקש קוד חדש, או היכנסו עם שם המשתמש והסיסמה.",
+                          "❌ Signing in with the code didn't work. Reload the page to ask for a new code, "
+                          "or sign in with your username and password."),
+    "bad_email": ("❌ זו לא כתובת מייל תקינה. רעננו את הדף כדי לנסות שוב.",
+                  "❌ That isn't a valid email address. Reload the page to try again."),
+    "too_many_codes": ("❌ נשלחו יותר מדי קודים מהרשת הזאת. המתינו כמה דקות ונסו שוב.",
+                       "❌ Too many codes were asked for from this network. Wait a few minutes and try again."),
     "no_username": ("לא התקבל שם משתמש. רעננו את הדף כדי לנסות שוב.",
                     "No username was received. Reload the page to try again."),
     "ask_password": ("עכשיו את הסיסמה. (עד שהמרצה משנה אותה, היא זהה לשם המשתמש.)",
@@ -152,6 +166,22 @@ TEXTS: dict[str, tuple[str, str]] = {
                   "opens it for the whole class. Meanwhile you can ask questions here about what you did."),
     "lab_done": ("🎉 סיימתם את כל השלבים של המעבדה. כל הכבוד!",
                  "🎉 You finished every step of the lab. Well done!"),
+
+    # --- my work: the student's copy of the lab, to download ---
+    "my_work_offer": ("📥 רוצים לשמור את מה שעשיתם? הורידו את העבודה שלכם בכפתור שלמטה, או בכל רגע "
+                      "בכפתור **העבודה שלי** שמתחת לתיבת ההודעה.",
+                      "📥 Want to keep what you did? Download your work with the button below, or at any time "
+                      "with **My work** under the message box."),
+    "btn_my_work": ("📥 הורדת העבודה שלי", "📥 Download my work"),
+    "cmd_my_work": ("העבודה שלי", "My work"),
+    "cmd_my_work_tip": ("הורדת כל מה שעשיתם במעבדה הזו, כדף אחד", "Download everything you did in this lab, as one page"),
+    "my_work_ready": ("📄 הנה העבודה שלכם במעבדה הזו, כדף אחד: השלבים, הפלטים והתשובות שלכם, והשיחה עם המורה. "
+                      "לחצו על הקובץ כדי לשמור אותו, ופתחו אותו בדפדפן כדי לקרוא או להדפיס.",
+                      "📄 Here is your work in this lab, as one page: the steps, your outputs and answers, and the "
+                      "conversation with the tutor. Click the file to save it, and open it in a browser to read or print it."),
+    "my_work_failed": ("⚠️ לא הצלחנו להכין את הקובץ. נסו שוב בעוד רגע.",
+                       "⚠️ The file couldn't be prepared. Try again in a moment."),
+    "my_work_none": ("עוד אין מה להוריד: קודם פותחים מעבדה.", "There's nothing to download yet: open a lab first."),
 
     # --- a message that may be a step's answer ---
     "maybe_step_q": ("🤔 שלחתם שאלה, או את התשובה לשלב {label}?",

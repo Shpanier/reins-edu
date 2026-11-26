@@ -4,6 +4,7 @@ import { useLang } from "../i18n";
 import { Button, FormField, Modal, Notice, Select, useToast } from "../components/ui";
 import { TutorForm } from "./TutorForm";
 import { NotificationSettings } from "./Notifications";
+import { SigninSettings } from "./SigninSettings";
 
 /** The AI tutor's key, the student chat's language, and where this
  *  installation keeps its files. */
@@ -72,6 +73,11 @@ export function SettingsModal({ settings, onChanged, onClose, focus, onNotifyCha
             <option value="en">{t("setLangEn")}</option>
           </Select>
         </FormField>
+      </section>
+
+      <hr className="vc-divider" />
+      <section className="vc-section">
+        <SigninSettings />
       </section>
 
       <hr className="vc-divider" />
