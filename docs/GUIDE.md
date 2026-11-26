@@ -435,6 +435,25 @@ Nothing in a browser can stop a student from opening another AI site: "only this
 chat" is a class rule. Copilot can be turned off in a template repository's
 `.devcontainer/devcontainer.json`.
 
+### My work: the student's copy
+
+At the end of the lesson a student can download their work and keep it: one
+HTML page that opens in any browser and prints (Hebrew right to left), with the
+lab's title, the course, the dates, the steps done and not done, and then
+everything their chat showed and everything they wrote, in order: the brief,
+each step, the outputs they pasted, the tutor's answers, the quiz questions and
+their answers, your notes. Only what the student saw or wrote: nothing about
+other students, and no grade or note their chat didn't show them.
+
+The chat offers it with the note that the lab is done (*📥 Download my work*),
+and at any time with the *My work* button under the message box, so a student
+who didn't finish before the end of the lesson can take their work too. An
+exercise that keeps no chat history (`chat_history: false`) gets what the
+server keeps instead: the outputs per step, the quiz answers and the questions
+to the tutor. The API is `GET /api/my-work/{session_id}` (`?lang=he|en` for
+the page's own words; default the lab's language): the session's own student,
+or a teacher.
+
 ## Sharing with students
 
 Students open one link: the chat at `/chat/` on your REINS Edu. **Share with

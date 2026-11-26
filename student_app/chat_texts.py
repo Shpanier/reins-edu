@@ -167,6 +167,22 @@ TEXTS: dict[str, tuple[str, str]] = {
     "lab_done": ("🎉 סיימתם את כל השלבים של המעבדה. כל הכבוד!",
                  "🎉 You finished every step of the lab. Well done!"),
 
+    # --- my work: the student's copy of the lab, to download ---
+    "my_work_offer": ("📥 רוצים לשמור את מה שעשיתם? הורידו את העבודה שלכם בכפתור שלמטה, או בכל רגע "
+                      "בכפתור **העבודה שלי** שמתחת לתיבת ההודעה.",
+                      "📥 Want to keep what you did? Download your work with the button below, or at any time "
+                      "with **My work** under the message box."),
+    "btn_my_work": ("📥 הורדת העבודה שלי", "📥 Download my work"),
+    "cmd_my_work": ("העבודה שלי", "My work"),
+    "cmd_my_work_tip": ("הורדת כל מה שעשיתם במעבדה הזו, כדף אחד", "Download everything you did in this lab, as one page"),
+    "my_work_ready": ("📄 הנה העבודה שלכם במעבדה הזו, כדף אחד: השלבים, הפלטים והתשובות שלכם, והשיחה עם המורה. "
+                      "לחצו על הקובץ כדי לשמור אותו, ופתחו אותו בדפדפן כדי לקרוא או להדפיס.",
+                      "📄 Here is your work in this lab, as one page: the steps, your outputs and answers, and the "
+                      "conversation with the tutor. Click the file to save it, and open it in a browser to read or print it."),
+    "my_work_failed": ("⚠️ לא הצלחנו להכין את הקובץ. נסו שוב בעוד רגע.",
+                       "⚠️ The file couldn't be prepared. Try again in a moment."),
+    "my_work_none": ("עוד אין מה להוריד: קודם פותחים מעבדה.", "There's nothing to download yet: open a lab first."),
+
     # --- a message that may be a step's answer ---
     "maybe_step_q": ("🤔 שלחתם שאלה, או את התשובה לשלב {label}?",
                      "🤔 Was that a question, or your answer for step {label}?"),

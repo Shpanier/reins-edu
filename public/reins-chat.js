@@ -333,5 +333,20 @@
     const t = e.target;
     if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) markField(t);
   });
+
+  // The "My work" button under the message box (a Chainlit command,
+  // student_app/app.py; its names are chat_texts.py's cmd_my_work). Chainlit only
+  // selects a command on a click and waits for Send; this one needs nothing
+  // typed, so with the box empty a click sends it at once. (Runs before
+  // Chainlit's own handler, so a button already selected is being unselected.)
+  const MY_WORK = ["My work", "העבודה שלי"];
+  document.addEventListener("click", (e) => {
+    const btn = e.target instanceof Element ? e.target.closest("button.command-button") : null;
+    if (!btn || !MY_WORK.some((name) => btn.id === "command-" + name)) return;
+    if (btn.classList.contains("text-command")) return;
+    const box = document.getElementById("chat-input");
+    if (box && (box.value ?? box.textContent ?? "").trim()) return;
+    setTimeout(() => { const send = document.getElementById("chat-submit"); if (send) send.click(); }, 80);
+  }, true);
   scan();
 })();

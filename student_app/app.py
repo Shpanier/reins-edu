@@ -617,6 +617,7 @@ async def on_chat_start():
     cl.user_session.set("paced", paced)
     # One thing at a time: the poller and the "done" button both ask questions.
     cl.user_session.set("lock", asyncio.Lock())
+    await _offer_my_work()
 
     async with cl.user_session.get("lock"):
         history = await _replay()
@@ -736,8 +737,63 @@ async def on_suggest(action: cl.Action):
     await _ask(action.payload["value"])
 
 
+# --- my work: the student's own copy of the lab (backend/my_work.py) --------------------
+# One HTML page with the lab, how far they got and the whole conversation. Offered
+# with the note that the lab is done, and at any time by the "My work" button under
+# the message box (a Chainlit command; public/reins-chat.js sends it on one click).
+
+_MY_WORK = {_text("cmd_my_work", "he"), _text("cmd_my_work", "en")}
+
+
+def _my_work_button() -> cl.Action:
+    return cl.Action(name="my_work", payload={}, label=_t("btn_my_work"))
+
+
+@cl.action_callback("my_work")
+async def on_my_work(action: cl.Action):
+    await _send_my_work()
+
+
+async def _offer_my_work() -> None:
+    """The "My work" button under the message box, once a lab is open."""
+    try:
+        await cl.context.emitter.set_commands([{
+            "id": _t("cmd_my_work"), "icon": "download", "description": _t("cmd_my_work_tip"),
+            "button": True, "persistent": False}])
+    except Exception as e:  # an older Chainlit: the button at the end of the lab still works
+        log.warning("my-work command: %s", e)
+
+
+async def _send_my_work() -> None:
+    """GET /api/my-work/<session> and hand the page over as a file to save."""
+    sid = cl.user_session.get("session_id")
+    if not sid:
+        await cl.Message(content=_t("my_work_none")).send()
+        return
+    r = None
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(f"{BACKEND}/api/my-work/{sid}", headers=_auth(), params={"lang": _lang()})
+    except httpx.HTTPError as e:
+        log.warning("my work failed: %s", e)
+    if r is None or r.status_code != 200:
+        if r is not None:
+            log.warning("my work: HTTP %s %s", r.status_code, r.text[:200])
+        await cl.Message(content=_t("my_work_failed")).send()
+        return
+    found = re.search(r'filename="([^"]+)"', r.headers.get("content-disposition", ""))
+    name = found.group(1) if found else "my-work.html"
+    await cl.Message(content=_t("my_work_ready"), elements=[
+        cl.File(name=name, content=r.content, mime="text/html", display="inline")]).send()
+
+
 @cl.on_message
 async def on_message(msg: cl.Message):
+    if getattr(msg, "command", None) in _MY_WORK:
+        # The "My work" button: the file, not a message for the tutor.
+        await _send_my_work()
+        if not (msg.content or "").strip():
+            return
     awaiting = cl.user_session.get("awaiting_output") if cl.user_session.get("paced") else None
     if awaiting is not None:
         # Asked for after "Done": this message is the step's output.
@@ -941,7 +997,8 @@ async def _show_state():
             await _say(text, kind="note", step=st["current"])
     elif st["finished"] and not cl.user_session.get("finished_note"):
         cl.user_session.set("finished_note", True)
-        await _say(_t("lab_done"), kind="note", step=st["total"] + 1)
+        await _say(f"{_t('lab_done')}\n\n{_t('my_work_offer')}", kind="note", step=st["total"] + 1,
+                   actions=[_my_work_button()])
 
 
 async def _send_step(step: dict, unlocked: bool):
@@ -1057,7 +1114,7 @@ async def _not_this_step(st: dict, n: int):
         text = _t("not_open_yet", label=st["current_label"])
     else:
         text = _t("already_done", label=label, current=st.get("current_label"))
-    await _say(text)
+    await _say(text, actions=[_my_work_button()] if st.get("finished") else None)
 
 
 async def _poll(session_id: str, token: str):

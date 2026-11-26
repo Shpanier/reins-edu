@@ -54,3 +54,11 @@ def test_the_chat_only_asks_for_lines_that_exist_and_has_no_hebrew_of_its_own():
     # What the chat says lives in chat_texts; app.py keeps only the "done" words students type.
     lines = [ln for ln in source.splitlines() if _HEBREW.search(ln) and "_DONE_TEXT" not in ln and "_HEBREW" not in ln]
     assert not lines, lines
+
+
+def test_the_my_work_button_has_the_same_names_in_the_script():
+    """public/reins-chat.js sends the "My work" command on one click: it finds
+    the button by the command's names, in both languages."""
+    js = (ROOT / "public" / "reins-chat.js").read_text(encoding="utf-8")
+    he, en = chat_texts.TEXTS["cmd_my_work"]
+    assert f'const MY_WORK = ["{en}", "{he}"];' in js

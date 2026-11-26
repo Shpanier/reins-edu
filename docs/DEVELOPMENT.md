@@ -66,7 +66,7 @@ backend/            FastAPI server
   tunnel.py         the students' link: cloudflared / ngrok
   routes/           the API (setup.py: first run, settings, sharing)
   agents/           drafted answers, suggested questions, grading (CrewAI)
-  pacing.py, steps.py, transcript.py, review queue in routes/review.py
+  pacing.py, steps.py, transcript.py, my_work.py, review queue in routes/review.py
   web/              the built dashboard (generated)
 student_app/        the students' chat
 dashboard/          the lecturer's dashboard (source)

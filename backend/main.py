@@ -28,6 +28,7 @@ from backend.routes import (
     grade,
     login,
     mode,
+    my_work as my_work_routes,
     notifications as notification_routes,
     pacing as pacing_routes,
     plugin,
@@ -137,6 +138,7 @@ app.include_router(files.router, prefix="/api")
 app.include_router(step_routes.router, prefix="/api")
 app.include_router(pacing_routes.router, prefix="/api")
 app.include_router(transcript_routes.router, prefix="/api")
+app.include_router(my_work_routes.router, prefix="/api")
 app.include_router(terminal_routes.router, prefix="/api")
 app.include_router(trace_routes.router, prefix="/api")
 app.include_router(course_routes.router, prefix="/api")
