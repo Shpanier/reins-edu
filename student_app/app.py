@@ -6,6 +6,7 @@ import re
 import sys
 import uuid
 import warnings
+from http.cookies import CookieError, SimpleCookie
 
 import chainlit as cl
 import httpx
@@ -35,24 +36,48 @@ AUTH_PAGE = bool(os.environ.get("CHAINLIT_AUTH_SECRET", "").strip())
 
 _HEBREW = re.compile(r"[֐-׿]")
 
+# The cookie that holds the student's choice of language (public/reins-chat.js).
+LANG_COOKIE = "reins_lang"
+
+
+def _picked_lang() -> str:
+    """The language the student chose with the English/Hebrew switch in the
+    chat's top bar (public/reins-chat.js keeps it in the LANG_COOKIE cookie,
+    which comes with the chat's connection), or "" when they haven't."""
+    try:
+        raw = (cl.context.session.environ or {}).get("HTTP_COOKIE", "")
+    except Exception:  # no chat session yet
+        return ""
+    jar = SimpleCookie()
+    try:
+        jar.load(raw)
+    except CookieError:
+        return ""
+    picked = jar[LANG_COOKIE].value if LANG_COOKIE in jar else ""
+    return picked if picked in ("he", "en") else ""
+
 
 def _lang() -> str:
     """The language of the chat's own lines for this student: "he" or "en"
     (student_app/chat_texts.py). The lecturer's setting CHAT_LANGUAGE=he|en
-    fixes it. On "auto" it is the lab's language once a lab is open
-    (_follow_lab), and the browser's language before that (signing in,
-    choosing a course)."""
+    fixes it. On "auto" it is the student's own choice (_picked_lang), then
+    the lab's language once a lab is open (_follow_lab), and before that
+    (signing in, choosing a course) the browser's language: its first one,
+    which Chainlit's own labels follow too."""
     forced = os.environ.get("CHAT_LANGUAGE", "auto").strip().lower()
     if forced in ("he", "en"):
         return forced
+    picked = _picked_lang()
+    if picked:
+        return picked
     try:
         chosen = cl.user_session.get("lang")
-        browser = cl.user_session.get("languages") or ""
+        browser = cl.context.session.language or ""
     except Exception:  # no chat session yet
         return "en"
     if chosen:
         return chosen
-    return "he" if re.search(r"(?:^|[\s,;])he\b", browser, re.I) else "en"
+    return "he" if browser.lower().startswith("he") else "en"
 
 
 def _follow_lab(exercise: dict) -> None:
@@ -176,6 +201,8 @@ if AUTH_PAGE:
         data = await _my_exercises(login["token"]) if login.get("token") else None
         if not data:
             return None
+        # `language` is the browser's, or the student's choice of language
+        # (public/reins-chat.js hands Chainlit that one).
         forced = os.environ.get("CHAT_LANGUAGE", "auto").strip().lower()
         lang = forced if forced in ("he", "en") else ("he" if (language or "").lower().startswith("he") else "en")
         return _menu(data, lang) or None

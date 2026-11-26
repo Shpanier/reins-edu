@@ -4,6 +4,38 @@
 // start with an English term: "Trivy סורק image…".)
 (() => {
   const HE = /[֐-׿]/;
+  // The student's choice of language: the EN/עב switch in the top bar
+  // (addLangSwitch). It is kept in the browser and in a cookie that the chat's
+  // server reads (student_app/app.py, _picked_lang). Chainlit's own labels
+  // follow navigator.language, so that is set to the choice before Chainlit
+  // starts: this file comes before Chainlit's script in the page, and runs first.
+  const LANG_KEY = "reins_lang";
+  const LANG_TAG = { he: "he-IL", en: "en-US" };
+  const picked = (() => {
+    let v = null;
+    try { v = localStorage.getItem(LANG_KEY); } catch { /* storage blocked */ }
+    if (!v) {
+      const m = document.cookie.match(/(?:^|;\s*)reins_lang=(he|en)(?:;|$)/);
+      v = m && m[1];
+    }
+    return v === "he" || v === "en" ? v : null;
+  })();
+  const savePicked = (lang) => {
+    try { localStorage.setItem(LANG_KEY, lang); } catch { /* the cookie still has it */ }
+    document.cookie = `${LANG_KEY}=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+  };
+  if (picked) {
+    savePicked(picked); // the cookie may have run out while the browser's copy hasn't
+    const tag = LANG_TAG[picked];
+    try {
+      Object.defineProperty(navigator, "language", { configurable: true, get: () => tag });
+      Object.defineProperty(navigator, "languages", { configurable: true, get: () => [tag] });
+    } catch { /* the browser refuses: Chainlit's labels keep the browser's language */ }
+    document.documentElement.lang = picked;
+  }
+  // This page's language: the student's choice, or else the browser's first
+  // language (the one Chainlit's labels and the chat's server go by).
+  const pageLang = () => picked || (/^he\b/i.test(navigator.language || "") ? "he" : "en");
   // Inside messages: paragraphs (Chainlit renders them as <div role="article">),
   // lists, headings, tables.
   const IN_MESSAGES = [
@@ -97,8 +129,16 @@
     '<path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>' +
     '<path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>' +
     '<path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
+  // What the server's sign-in offers, and the lecturer's language setting
+  // (GET /api/login/methods), asked once for the page.
+  let methodsAsked = null;
+  const askMethods = () => methodsAsked || (methodsAsked = fetch("/api/login/methods")
+    .then((r) => (r.ok ? r.json() : null)).catch(() => null));
   // null: not asked yet; false: the server offers neither (or is another program).
   let methods = null;
+  // The lecturer's language setting: null until asked; "auto" when the server
+  // doesn't say.
+  let langSetting = null;
   const signin = { step: "buttons", email: "", minutes: 10, message: "", tone: "" };
   // Back from Google with ?signin_error=<why>&email=<address> (backend/routes/signin.py):
   // said in the box under the form, then removed from the address.
@@ -116,9 +156,9 @@
   const onLogin = () => /\/login\/?$/.test(location.pathname);
   const chatBase = () => location.pathname.replace(/\/login\/?$/, "");
   const signinLang = () => {
-    const forced = methods && methods.chat_language;
+    const forced = (methods && methods.chat_language) || langSetting;
     if (forced === "he" || forced === "en") return forced;
-    return (navigator.languages || [navigator.language]).some((l) => /^he\b/i.test(l || "")) ? "he" : "en";
+    return pageLang();
   };
   const fill = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ""));
   const el = (tag, attrs, children) => {
@@ -249,10 +289,10 @@
     if (!onLogin()) return;
     if (methods === null) {
       methods = false;
-      fetch("/api/login/methods").then((r) => (r.ok ? r.json() : null)).then((m) => {
+      askMethods().then((m) => {
         methods = m && (m.google || m.email) && m.chat_page ? m : false;
         addSignin();
-      }).catch(() => {});
+      });
       return;
     }
     if (!methods) return;
@@ -309,12 +349,57 @@
     }
     const toggle = document.querySelector("#header #theme-toggle");
     if (!toggle || toggle.parentElement.querySelector(".reins-college")) return;
-    toggle.insertAdjacentElement("beforebegin", collegeLink("reins-college--header"));
+    const before = toggle.parentElement.querySelector(".reins-lang") || toggle;
+    before.insertAdjacentElement("beforebegin", collegeLink("reins-college--header"));
+  };
+
+  // The switch between English and Hebrew: in the chat's top bar beside the
+  // light/dark button, and in a corner of the sign-in page. A click keeps the
+  // choice and reloads the page, so that Chainlit's labels change with the
+  // chat's own lines. (Signed in on the chat's own sign-in page, the student
+  // stays signed in and the lab continues where it was; signing in inside the
+  // chat starts over.) Hidden when the lecturer fixed the chat's language.
+  const LANG_NAMES = { en: ["EN", "English"], he: ["עב", "עברית"] };
+  const addLangSwitch = () => {
+    if (langSetting === null) {
+      langSetting = "auto";
+      askMethods().then((m) => {
+        langSetting = (m && m.chat_language) || "auto";
+        if (langSetting !== "auto") document.querySelectorAll(".reins-lang").forEach((x) => x.remove());
+        addLangSwitch();
+      });
+      return;
+    }
+    if (langSetting !== "auto") return;
+    const login = onLogin();
+    const toggle = login ? null : document.querySelector("#header #theme-toggle");
+    const cls = "reins-lang " + (login ? "reins-lang--login" : "reins-lang--header");
+    const old = document.querySelector(".reins-lang");
+    if (old && old.className === cls && (login || old.nextElementSibling === toggle)) return;
+    if (old) old.remove();
+    if (!login && !toggle) return;
+    const now = pageLang();
+    const box = el("div", { class: cls, role: "group", "aria-label": now === "he" ? "שפה" : "Language" });
+    ["en", "he"].forEach((lang) => {
+      const [short, name] = LANG_NAMES[lang];
+      box.appendChild(el("button", {
+        type: "button", lang, dir: lang === "he" ? "rtl" : "ltr", title: name, "aria-label": name,
+        "aria-pressed": String(lang === now), text: short,
+        onclick: () => {
+          if (lang === picked) return;
+          savePicked(lang);
+          location.reload();
+        },
+      }));
+    });
+    if (login) document.body.appendChild(box);
+    else toggle.insertAdjacentElement("beforebegin", box);
   };
 
   const scan = () => {
     addAcronym();
     addSignin();
+    addLangSwitch();
     addCollege();
     document.querySelectorAll(IN_MESSAGES).forEach(mark);
     document.querySelectorAll(LABELS).forEach(markLabel);

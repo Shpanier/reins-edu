@@ -131,3 +131,25 @@ div.bg-accent.rounded-3xl:has(.message-content) .prose :not(pre) > code { backgr
 .reins-college--header { margin-inline: 4px 8px; }
 .reins-college--header img { height: 32px; padding: 2px 5px; }
 .reins-college--header:hover img, .reins-college--header:focus-visible img { box-shadow: 0 0 0 2px #f2b705; }
+
+/* The switch between English and Hebrew (reins-chat.js, addLangSwitch): two
+   small buttons, the language in use filled. */
+.reins-lang { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border-radius: 8px; flex: none; }
+.reins-lang button {
+  min-width: 34px; height: 28px; padding: 0 8px; border: 0; border-radius: 6px; background: none;
+  font: inherit; font-size: 14px; font-weight: 700; line-height: 1; cursor: pointer;
+}
+.reins-lang button:focus-visible { outline: 2px solid #f2b705; outline-offset: 1px; }
+.reins-lang--header { margin-inline: 4px; border: 1px solid #4a535c; }
+#header .reins-lang button[aria-pressed="true"],
+#header .reins-lang button[aria-pressed="true"]:hover { background: #eef0f2; color: #1d2227; cursor: default; }
+.reins-lang--login {
+  position: fixed; top: 14px; inset-inline-end: 14px; z-index: 60;
+  border: 1px solid hsl(var(--border)); background: hsl(var(--card));
+}
+.reins-lang--login button { color: hsl(var(--foreground)); }
+.reins-lang--login button:hover { background: hsl(var(--accent)); }
+.reins-lang--login button[aria-pressed="true"],
+.reins-lang--login button[aria-pressed="true"]:hover {
+  background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); cursor: default;
+}
